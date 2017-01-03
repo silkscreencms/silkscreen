@@ -137,6 +137,12 @@ function config_get_config_directory($type = 'active') {
   elseif (!empty($config_directories[$type])) {
     $path = $config_directories[$type];
 
+    // If the path contains a colon, assume it is a storage URL like
+    // db:/default/config_active and return it directly.
+    if (strpos($path, ':') !== FALSE) {
+      return $path;
+    }
+
     // If the path starts with a slash or dot, assume a normal path. If just
     // a directory name is provided, make it relative to the settings.php file.
     $first_character = substr($path, 0, 1);
@@ -248,6 +254,18 @@ function config_uninstall_config($module, $config_name = NULL) {
  */
 function config_get_config_storage($type = 'active') {
   $directory = config_get_config_directory($type);
+  $colon_pos = strpos($directory, ':');
+  if ($colon_pos !== FALSE) {
+    $storage_type = substr($directory, 0, $colon_pos);
+    switch ($storage_type) {
+      case 'db':
+        return new ConfigDatabaseStorage($directory);
+      case 'file':
+        return new ConfigFileStorage(substr($directory, $colon_pos+1));
+      default:
+        // fall through
+    }
+  }
   return new ConfigFileStorage($directory);
 }
 
@@ -834,8 +852,9 @@ interface ConfigStorageInterface {
    * @param string $name
    *   The name of a configuration object on which the time will be checked.
    *
-   * @return int
-   *   A timestamp indicating the last time the configuration was modified.
+   * @return int|FALSE
+   *   A timestamp indicating the last time the configuration was modified or
+   *   FALSE if the named configuration object doesn't exist.
    */
   public function getModifiedTime($name);
 

@@ -1,0 +1,6 @@
+name = Database-based configuration
+description = Store configuration in the database
+version = BACKDROP_VERSION
+backdrop = 1.x
+
+config_backend[ConfigDatabaseStorage] = config_database_storage.inc

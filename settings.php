@@ -33,8 +33,19 @@ $database_prefix = '';
  * $config_directories['active'] = '/home/myusername/config/active';
  * $config_directories['staging'] = '/home/myusername/config/staging';
  * @endcode
+ *
+ * Example using a database table:
+ * @code
+ * $config_directories['active'] = 'db://default/active_config';
+ * @endcode
+ *
+ * The config_database driver stores configuration in a database table. The
+ * "default" in the example is the database connection to use. If it is not
+ * present, then "default" is used. See the "Database configuration" above for
+ * setting up multiple connections. The "active_config" in the example is the
+ * name of the table to use.
  */
-$config_directories['active'] = 'files/config_' . md5($database) . '/active';
+$config_directories['active'] = 'db://active_config';
 $config_directories['staging'] = 'files/config_' . md5($database) . '/staging';
 
 /**
@@ -336,7 +347,7 @@ $settings['backdrop_drupal_compatibility'] = TRUE;
  *
  * To make local development easier, you can add a file that contains your local
  * database connection information. This local settings file can be ignored in
- * your Git repository so that any updates to settings.php can be pulled in 
+ * your Git repository so that any updates to settings.php can be pulled in
  * without overwriting your local changes.
  */
 if (file_exists(__DIR__ . '/settings.local.php')) {

@@ -1802,8 +1802,16 @@ abstract class Database {
   public static function loadDriverFile($driver, array $files = array()) {
     $backends = backdrop_find_backends('database');
 
+    // Load the base classes first
     foreach ($files as $file) {
       $base_class_file = BACKDROP_ROOT . '/core/includes/database/' . $file;
+      if (file_exists($base_class_file)) {
+        require_once $base_class_file;
+      }
+    }
+
+    // Then load the driver classes.
+    foreach ($files as $file) {
       foreach ($backends as $class => $class_file) {
           if (strpos($class, $driver) && strpos($class_file, $file)) {
           // The OS caches file_exists() and PHP caches require_once(), so
@@ -1811,9 +1819,6 @@ abstract class Database {
 
           // Load the base file first so that classes extending base classes will
           // have the base class loaded.
-          if (file_exists($base_class_file)) {
-            require_once $base_class_file;
-          }
           if (file_exists($class_file)) {
             require_once $class_file;
           }

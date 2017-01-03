@@ -6,6 +6,11 @@
 class ConfigFileStorage implements ConfigStorageInterface {
 
   /**
+   *
+   */
+  static $storage_class = 'File';
+
+  /**
    * The filesystem path for configuration objects.
    *
    * @var string
@@ -33,8 +38,8 @@ class ConfigFileStorage implements ConfigStorageInterface {
    */
   public function initializeStorage() {
     if (!file_prepare_directory($this->directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
-      throw new ConfigStorageException(format_string('The directory %directory could not be created or could not be made writable. ', array(
-      '%directory' => $config_directory,
+      throw new ConfigStorageException(format_string('The directory %directory could not be created or could not be made writable.', array(
+      '%directory' => $this->directory,
     )));
     }
   }
