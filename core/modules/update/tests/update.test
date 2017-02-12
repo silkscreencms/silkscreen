@@ -52,7 +52,7 @@ class UpdateTestHelper extends BackdropWebTestCase {
    * Runs a series of assertions that are applicable to all update statuses.
    */
   protected function assertStandardTests() {
-    $this->assertRaw('<h3>' . t('Backdrop CMS') . '</h3>');
+    $this->assertRaw('<h3>' . t('Silkscreen CMS') . '</h3>');
     $this->assertRaw(l(t('Backdrop CMS'), 'http://example.com/project/backdrop'), 'Link to the Backdrop CMS project appears.');
     $this->assertNoText(t('No available releases found'));
   }
@@ -158,8 +158,8 @@ class UpdateCoreTestCase extends UpdateTestHelper {
     $this->clickLink(t('Check manually'));
     $this->assertText(t('Checked available update data for one project.'));
     $this->backdropGet('admin/modules');
-    $this->assertNoText(t('There are updates available for your version of Backdrop.'));
-    $this->assertNoText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoText(t('There are updates available for your version of Silkscreen.'));
+    $this->assertNoText(t('There is a security update available for your version of Silkscreen.'));
   }
 
   /**
@@ -176,8 +176,8 @@ class UpdateCoreTestCase extends UpdateTestHelper {
     $this->clickLink(t('Check manually'));
     $this->assertText(t('Checked available update data for one project.'));
     $this->backdropGet('admin/modules');
-    $this->assertText(t('There are updates available for your version of Backdrop.'));
-    $this->assertNoText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertText(t('There are updates available for your version of Silkscreen.'));
+    $this->assertNoText(t('There is a security update available for your version of Silkscreen.'));
   }
 
   /**
@@ -194,26 +194,26 @@ class UpdateCoreTestCase extends UpdateTestHelper {
     $this->clickLink(t('Check manually'));
     $this->assertText(t('Checked available update data for one project.'));
     $this->backdropGet('admin/modules');
-    $this->assertNoText(t('There are updates available for your version of Backdrop.'));
-    $this->assertText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoText(t('There are updates available for your version of Silkscreen.'));
+    $this->assertText(t('There is a security update available for your version of Silkscreen.'));
 
     // Make sure admin/appearance warns you you're missing a security update.
     $this->backdropGet('admin/appearance');
-    $this->assertNoText(t('There are updates available for your version of Backdrop.'));
-    $this->assertText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoText(t('There are updates available for your version of Silkscreen.'));
+    $this->assertText(t('There is a security update available for your version of Silkscreen.'));
 
     // Make sure duplicate messages don't appear on Update status pages.
     $this->backdropGet('admin/reports/status');
     // We're expecting "There is a security update..." inside the status report
     // itself, but the backdrop_set_message() appears as an li so we can prefix
     // with that and search for the raw HTML.
-    $this->assertNoRaw('<li>' . t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoRaw('<li>' . t('There is a security update available for your version of Silkscreen.'));
 
     $this->backdropGet('admin/reports/updates');
-    $this->assertNoText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoText(t('There is a security update available for your version of Silkscreen.'));
 
     $this->backdropGet('admin/reports/updates/settings');
-    $this->assertNoText(t('There is a security update available for your version of Backdrop.'));
+    $this->assertNoText(t('There is a security update available for your version of Silkscreen.'));
   }
 
   /**
@@ -313,7 +313,7 @@ class UpdateTestContribCase extends UpdateTestHelper {
     $this->backdropGet('admin/reports/updates');
     // Cannot use $this->assertStandardTests() because we need to check for the
     // 'No available releases found' string.
-    $this->assertRaw('<h3>' . t('Backdrop CMS') . '</h3>');
+    $this->assertRaw('<h3>' . t('Silkscreen CMS') . '</h3>');
     $this->assertRaw(l(t('Backdrop CMS'), 'http://example.com/project/backdrop'));
     $this->assertText(t('Up to date'));
     $this->assertRaw('<h3>' . t('Modules') . '</h3>');

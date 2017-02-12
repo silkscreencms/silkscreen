@@ -47,7 +47,7 @@ function update_requirements($phase) {
       }
     }
     else {
-      $requirements['update_core']['title'] = t('Backdrop CMS core update status');
+      $requirements['update_core']['title'] = t('Silkscreen CMS core update status');
       $requirements['update_core']['value'] = t('No update data available');
       $requirements['update_core']['severity'] = REQUIREMENT_INFO;
       $requirements['update_core']['reason'] = UPDATE_UNKNOWN;
@@ -107,7 +107,7 @@ function update_uninstall() {
 function _update_requirement_check($project, $type) {
   $requirement = array();
   if ($type == 'core') {
-    $requirement['title'] = t('Backdrop CMS update status');
+    $requirement['title'] = t('Silkscreen CMS update status');
   }
   else {
     $requirement['title'] = t('Module, theme and layout update status');

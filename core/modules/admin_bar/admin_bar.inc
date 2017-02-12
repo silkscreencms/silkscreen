@@ -686,7 +686,7 @@ function admin_bar_links_alert() {
     $alert['alert'] = array(
       '#title' => '<span class="error-label">' . t('Site status') . '</span><span class="error-count">' . $count . '</span>',
       '#attributes' => array(
-        'title' => format_plural($count, 'One problem was detected with your Backdrop installation.', 'Several problems were detected with your Backdrop installation.'),
+        'title' => format_plural($count, 'One problem was detected with your Silkscreen installation.', 'Several problems were detected with your Silkscreen installation.'),
         'class' => array('admin-bar-alert', 'admin-bar-alert-error'),
       ),
       '#href' => 'admin/reports/status',

@@ -281,7 +281,7 @@ function theme_update_report($variables) {
   }
 
   $project_types = array(
-    'core' => t('Backdrop CMS'),
+    'core' => t('Silkscreen CMS'),
     'module' => t('Modules'),
     'theme' => t('Themes'),
     'layout' => t('Layouts'),

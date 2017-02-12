@@ -204,7 +204,7 @@ function backdrop_set_installed_schema_version($module, $version) {
  *
  * @return
  *   The distribution name defined in the profile's .info file. Defaults to
- *   "Backdrop CMS" if none is explicitly provided by the installation profile.
+ *   "Silkscreen CMS" if none is explicitly provided by the installation profile.
  *
  * @see install_profile_info()
  */
@@ -475,7 +475,7 @@ abstract class DatabaseTasks {
       db_set_active();
       // Now actually do a check.
       Database::getConnection();
-      $this->pass('Backdrop can CONNECT to the database ok.');
+      $this->pass('Silkscreen can CONNECT to the database ok.');
     }
     catch (PDOException $e) {
       $message = preg_replace('/SQLSTATE\[(\w+)\] \[(\w+)\] (.*)/', '$3', $e->getMessage());
@@ -1380,7 +1380,7 @@ function install_profile_info($profile, $langcode = 'en') {
     $defaults = array(
       'dependencies' => array(),
       'description' => '',
-      'distribution_name' => 'Backdrop CMS',
+      'distribution_name' => 'Silkscreen CMS',
       'version' => NULL,
       'hidden' => FALSE,
       'php' => BACKDROP_MINIMUM_PHP,

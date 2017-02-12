@@ -223,7 +223,7 @@ function system_token_info() {
   );
   $file['path'] = array(
     'name' => t('Path'),
-    'description' => t('The location of the file relative to the Backdrop root.'),
+    'description' => t('The location of the file relative to the Silkscreen root.'),
   );
   $file['url'] = array(
     'name' => t('URL'),

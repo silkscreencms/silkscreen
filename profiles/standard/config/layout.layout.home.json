@@ -10,7 +10,7 @@
     "layout_template": "boxton",
     "disabled": false,
     "settings": {
-        "title": "Welcome to Backdrop",
+        "title": "Welcome to Silkscreen",
         "title_display": "none",
         "title_block": "094cbc03-d088-4b3c-8361-977733540ae8"
     },
@@ -94,7 +94,7 @@
                 "delta": "hero",
                 "settings": {
                     "title_display": "default",
-                    "title": "Welcome to Backdrop CMS",
+                    "title": "Welcome to Silkscreen CMS",
                     "style": "default",
                     "block_settings": [],
                     "contexts": [],

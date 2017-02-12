@@ -2482,7 +2482,7 @@ function hook_requirements($phase) {
   // Report Backdrop version
   if ($phase == 'runtime') {
     $requirements['backdrop'] = array(
-      'title' => $t('Backdrop CMS'),
+      'title' => $t('Silkscreen CMS'),
       'value' => BACKDROP_VERSION,
       'severity' => REQUIREMENT_INFO
     );
@@ -2494,7 +2494,7 @@ function hook_requirements($phase) {
     'value' => ($phase == 'runtime') ? l(phpversion(), 'admin/reports/status/php') : phpversion(),
   );
   if (version_compare(phpversion(), BACKDROP_MINIMUM_PHP) < 0) {
-    $requirements['php']['description'] = $t('Your PHP installation is too old. Backdrop CMS requires at least PHP %version.', array('%version' => BACKDROP_MINIMUM_PHP));
+    $requirements['php']['description'] = $t('Your PHP installation is too old. Silkscreen CMS requires at least PHP %version.', array('%version' => BACKDROP_MINIMUM_PHP));
     $requirements['php']['severity'] = REQUIREMENT_ERROR;
   }
 

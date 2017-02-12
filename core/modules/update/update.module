@@ -490,7 +490,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
   switch ($msg_reason) {
     case UPDATE_NOT_SECURE:
       if ($msg_type == 'core') {
-        $text = t('There is a security update available for your version of Backdrop. To ensure the security of your server, you should update immediately!', array(), array('langcode' => $langcode));
+        $text = t('There is a security update available for your version of Silkscreen. To ensure the security of your server, you should update immediately!', array(), array('langcode' => $langcode));
       }
       else {
         $text = t('There are security updates available for one or more of your modules or themes. To ensure the security of your server, you should update immediately!', array(), array('langcode' => $langcode));
@@ -499,7 +499,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
 
     case UPDATE_REVOKED:
       if ($msg_type == 'core') {
-        $text = t('Your version of Backdrop has been revoked and is no longer available for download. Upgrading is strongly recommended!', array(), array('langcode' => $langcode));
+        $text = t('Your version of Silkscreen has been revoked and is no longer available for download. Upgrading is strongly recommended!', array(), array('langcode' => $langcode));
       }
       else {
         $text = t('The installed version of at least one of your modules or themes has been revoked and is no longer available for download. Upgrading or disabling is strongly recommended!', array(), array('langcode' => $langcode));
@@ -508,7 +508,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
 
     case UPDATE_NOT_SUPPORTED:
       if ($msg_type == 'core') {
-        $text = t('Your version of Backdrop CMS is no longer supported. Upgrading is strongly recommended!', array(), array('langcode' => $langcode));
+        $text = t('Your version of Silkscreen CMS is no longer supported. Upgrading is strongly recommended!', array(), array('langcode' => $langcode));
       }
       else {
         $text = t('The installed version of at least one of your modules or themes is no longer supported. Upgrading or disabling is strongly recommended. See the project homepage for more details.', array(), array('langcode' => $langcode));
@@ -517,7 +517,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
 
     case UPDATE_NOT_CURRENT:
       if ($msg_type == 'core') {
-        $text = t('There are updates available for your version of Backdrop. To ensure the proper functioning of your site, you should update as soon as possible.', array(), array('langcode' => $langcode));
+        $text = t('There are updates available for your version of Silkscreen. To ensure the proper functioning of your site, you should update as soon as possible.', array(), array('langcode' => $langcode));
       }
       else {
         $text = t('There are updates available for one or more of your modules or themes. To ensure the proper functioning of your site, you should update as soon as possible.', array(), array('langcode' => $langcode));
@@ -527,7 +527,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
     case UPDATE_UNKNOWN:
     case UPDATE_NOT_CHECKED:
     if ($msg_type == 'core') {
-        $text = t('Update checking is not available for your version of Backdrop.');
+        $text = t('Update checking is not available for your version of Silkscreen.');
       }
       else {
         $text = t('Update checking is not available for some of your projects.');
@@ -535,7 +535,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
       break;
     case UPDATE_FETCH_PENDING:
       if ($msg_type == 'core') {
-        $text = t('Update may be needed for your version of Backdrop.');
+        $text = t('Update may be needed for your version of Silkscreen.');
       }
       else {
         $text = t('Updates may be needed for one or more of your projects.');
@@ -543,7 +543,7 @@ function _update_message_text($msg_type, $msg_reason, $report_link = FALSE, $lan
       break;
     case UPDATE_NOT_FETCHED:
       if ($msg_type == 'core') {
-        $text = t('There was a problem checking <a href="@update-report">available updates</a> for Backdrop.', array('@update-report' => url('admin/reports/updates')), array('langcode' => $langcode));
+        $text = t('There was a problem checking <a href="@update-report">available updates</a> for Silkscreen.', array('@update-report' => url('admin/reports/updates')), array('langcode' => $langcode));
       }
       else {
         $text = t('There was a problem checking <a href="@update-report">available updates</a> for your modules or themes.', array('@update-report' => url('admin/reports/updates')), array('langcode' => $langcode));

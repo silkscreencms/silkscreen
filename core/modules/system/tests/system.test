@@ -768,7 +768,7 @@ class MetaTagsTestCase extends BackdropWebTestCase {
   public function testMetaTag() {
     list($version, ) = explode('.', BACKDROP_VERSION);
     $meta_tags = array(
-      'generator' => '<meta name="Generator" content="Backdrop CMS ' . $version . ' (https://backdropcms.org)" />',
+      'generator' => '<meta name="Generator" content="Silkscreen CMS ' . $version . ' (https://silkscreencms.org)" />',
       'viewport' => '<meta name="viewport" content="width=device-width, initial-scale=1" />',
     );
 
@@ -820,7 +820,7 @@ class AccessDeniedTestCase extends BackdropWebTestCase {
 
     $this->backdropGet('admin');
     $this->assertText($node->title, 'Found the custom 403 page');
-    $this->assertText('Powered by Backdrop CMS', 'Blocks are shown on the custom 403 page');
+    $this->assertText('Powered by Silkscreen CMS', 'Blocks are shown on the custom 403 page');
 
     // Log back in and remove the custom 403 page.
     $this->backdropLogin($this->admin_user);
@@ -832,7 +832,7 @@ class AccessDeniedTestCase extends BackdropWebTestCase {
     $this->backdropGet('admin');
     $this->assertText(t('Access denied'), 'Found the default 403 page');
     $this->assertResponse(403);
-    $this->assertText('Powered by Backdrop CMS', 'Blocks are shown on the default 403 page');
+    $this->assertText('Powered by Silkscreen CMS', 'Blocks are shown on the default 403 page');
 
     // Log back in, set the custom 403 page to /user and remove the block
     $this->backdropLogin($this->admin_user);
@@ -1168,7 +1168,7 @@ class SiteMaintenanceTestCase extends BackdropWebTestCase {
     $this->backdropGet('admin/config/development/maintenance');
     $this->assertNoRaw($admin_message, 'Site maintenance mode message not displayed.');
 
-    $offline_message = 'Backdrop is currently under maintenance. We should be back shortly. Thank you for your patience.';
+    $offline_message = 'Silkscreen is currently under maintenance. We should be back shortly. Thank you for your patience.';
     $edit = array(
       'maintenance_mode_message' => $offline_message,
     );
@@ -2229,7 +2229,7 @@ class ShutdownFunctionsTest extends BackdropWebTestCase {
 
     // Make sure exceptions displayed through _backdrop_render_exception_safe()
     // are correctly escaped.
-    $message = 'Exception: Backdrop is &amp;lt;blink&amp;gt;awesome&amp;lt;/blink&amp;gt;';
+    $message = 'Exception: Silkscreenis &amp;lt;blink&amp;gt;awesome&amp;lt;/blink&amp;gt;';
     $exception_log = db_query("SELECT COUNT(*) FROM {watchdog} WHERE message LIKE :string", array(':string' => db_like($message) . '%'))->fetchField();
     $this->assertRaw($exception_log, 1, 'Uncaught exception logged.');
   }

@@ -1812,10 +1812,10 @@ class NodeFeedTestCase extends BackdropWebTestCase {
    */
   function testNodeFeedExtraChannelElements() {
     ob_start();
-    node_feed(array(), array('copyright' => 'Copyright Backdrop CMS.'));
+    node_feed(array(), array('copyright' => 'Copyright Silkscreen CMS.'));
     $output = ob_get_clean();
 
-    $this->assertTrue(strpos($output, '<copyright>Copyright Backdrop CMS.</copyright>') !== FALSE);
+    $this->assertTrue(strpos($output, '<copyright>Copyright Silkscreen CMS.</copyright>') !== FALSE);
   }
 }
 

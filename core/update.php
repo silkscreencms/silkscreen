@@ -31,7 +31,7 @@ chdir(BACKDROP_ROOT);
 // yet available. It is defined in bootstrap.inc, but it is not possible to
 // load that file yet as it would cause a fatal error on older versions of PHP.
 if (version_compare(PHP_VERSION, '5.3.2') < 0) {
-  print 'Your PHP installation is too old. Backdrop CMS requires at least PHP 5.3.2. See the <a href="https://backdropcms.org/guide/requirements">System Requirements</a> page for more information.';
+  print 'Your PHP installation is too old. Silkscreen CMS requires at least PHP 5.3.2. See the <a href="https://backdropcms.org/guide/requirements">System Requirements</a> page for more information.';
   exit;
 }
 
@@ -51,7 +51,7 @@ define('MAINTENANCE_MODE', 'update');
  * Renders form with a list of available database updates.
  */
 function update_selection_page() {
-  backdrop_set_title('Backdrop database update');
+  backdrop_set_title('Silkscreen database update');
   $elements = backdrop_get_form('update_script_selection_form');
   $output = backdrop_render($elements);
 
@@ -191,7 +191,7 @@ function update_helpful_links() {
  * Displays results of the update script with any accompanying errors.
  */
 function update_results_page() {
-  backdrop_set_title('Backdrop database update');
+  backdrop_set_title('Silkscreen database update');
 
   update_task_list();
   // Report end result.
@@ -296,9 +296,9 @@ function update_info_page() {
   $config_dir = config_get_config_directory('active');
 
   update_task_list('info');
-  backdrop_set_title('Backdrop database update');
+  backdrop_set_title('Silkscreen database update');
   $token = backdrop_get_token('update');
-  $output = '<p>Use this utility to update your database whenever you install a new version of Backdrop CMS and/or one of the site\'s modules.</p><p>For more detailed information, see the <a href="https://backdropcms.org/guide/upgrade">Upgrading Backdrop CMS</a> page. If you are unsure of what these terms mean you should probably contact your hosting provider.</p>';
+  $output = '<p>Use this utility to update your database whenever you install a new version of Silkscreen CMS and/or one of the site\'s modules.</p><p>For more detailed information, see the <a href="https://backdropcms.org/guide/upgrade">Upgrading Backdrop CMS</a> page. If you are unsure of what these terms mean you should probably contact your hosting provider.</p>';
   $output .= "<ol>\n";
   $output .= "<li><strong>Make any necessary backups.</strong> This update utility will alter your database and config files. In case of an emergency you may need to revert to a recent backup; make sure you have one.\n";
   $output .= "<ul>\n";

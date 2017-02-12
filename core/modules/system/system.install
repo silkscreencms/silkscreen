@@ -16,7 +16,7 @@ function system_requirements($phase) {
   // Report Backdrop version
   if ($phase == 'runtime') {
     $requirements['backdrop'] = array(
-      'title' => $t('Backdrop CMS'),
+      'title' => $t('Silkscreen CMS'),
       'value' => BACKDROP_VERSION,
       'severity' => REQUIREMENT_INFO,
       'weight' => -10,
@@ -147,7 +147,7 @@ function system_requirements($phase) {
       // Make sure the native PDO extension is available, not the older PEAR
       // version. (See install_verify_pdo() for details.)
       if (!defined('PDO::ATTR_DEFAULT_FETCH_MODE')) {
-        $pdo_message = $t('Your web server seems to have the wrong version of PDO installed. Backdrop CMS requires the PDO extension from PHP core. This system has the older PECL version. See the <a href="@link">System Requirements</a> page for more information.', array(
+        $pdo_message = $t('Your web server seems to have the wrong version of PDO installed. Silkscreen CMS requires the PDO extension from PHP core. This system has the older PECL version. See the <a href="@link">System Requirements</a> page for more information.', array(
           '@link' => 'https://backdropcms.org/requirements',
         ));
       }
@@ -548,7 +548,7 @@ function system_requirements($phase) {
   if ($phase == 'runtime') {
     // Inform user about status of display error messages.
     $error_level = config_get('system.core', 'error_level');
-    $description_start = $t('Backdrop CMS provides the ability to display error messages, which can be useful while a site is in development.');
+    $description_start = $t('Silkscreen CMS provides the ability to display error messages, which can be useful while a site is in development.');
     $logging_url = base_path() . 'admin/config/development/logging';
     if ($error_level != ERROR_REPORTING_HIDE) {
       $value =  $t('Enabled');

@@ -1716,7 +1716,7 @@ class LocalePathFunctionalTest extends BackdropWebTestCase {
     // Check that the "xx" front page is readily available because path prefix
     // negotiation is pre-configured.
     $this->backdropGet($prefix);
-    $this->assertText(t('Welcome to Backdrop'), 'The "xx" front page is readibly available.');
+    $this->assertText(t('Welcome to Silkscreen'), 'The "xx" front page is readibly available.');
 
     // Create a node.
     $node = $this->backdropCreateNode(array('type' => 'page'));

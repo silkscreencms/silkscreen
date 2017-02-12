@@ -229,7 +229,7 @@ function installer_verify_update_archive($project, $archive_file, $directory) {
     && file_exists("$directory/$project/core/modules/system/system.module")
   ) {
     return array(
-      'no-core' => t('Automatic updating of Backdrop CMS core is not supported. See the <a href="@upgrade-guide">upgrade guide</a> for information on how to update Backdrop CMS core manually.', array('@upgrade-guide' => 'https://backdropcms.org/guide/upgrade')),
+      'no-core' => t('Automatic updating of Silkscreen CMS core is not supported. See the <a href="@upgrade-guide">upgrade guide</a> for information on how to update Silkscreen CMS core manually.', array('@upgrade-guide' => 'https://backdropcms.org/guide/upgrade')),
     );
   }
 

@@ -142,7 +142,7 @@ function backdrop_mail($module, $key, $to, $language, $params = array(), $reply 
     'MIME-Version'              => '1.0',
     'Content-Type'              => 'text/plain; charset=UTF-8; format=flowed; delsp=yes',
     'Content-Transfer-Encoding' => '8Bit',
-    'X-Mailer'                  => 'Backdrop CMS'
+    'X-Mailer'                  => 'Silkscreen CMS'
   );
   if ($from) {
     // To prevent e-mail from looking like spam, the addresses in the Sender and

@@ -109,7 +109,7 @@ function update_prepare_bootstrap() {
       $requirements['settings file'] += array(
         'value' => 'settings.php is not writable.',
         'severity' => REQUIREMENT_ERROR,
-        'description' => 'Backdrop CMS requires write permissions to <em>' . $settings_file . '</em> during the update process. If you are unsure how to grant file permissions, consult the <a href="https://backdropcms.org/installation">Installation Instructions</a> page.',
+        'description' => 'Silkscreen CMS requires write permissions to <em>' . $settings_file . '</em> during the update process. If you are unsure how to grant file permissions, consult the <a href="https://backdropcms.org/installation">Installation Instructions</a> page.',
       );
     }
     update_extra_requirements($requirements);

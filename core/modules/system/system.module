@@ -2370,8 +2370,8 @@ function system_block_info() {
     'render last' => TRUE,
   );
   $blocks['powered-by'] = array(
-    'info' => t('Powered by Backdrop'),
-    'description' => t('Displays a link to <a href="https://backdropcms.org">the Backdrop CMS website</a>.'),
+    'info' => t('Powered by Silkscreen'),
+    'description' => t('Displays a link to <a href="https://silkscreencms.org">the Silkscreen CMS website</a>.'),
     'weight' => '10',
   );
   // System-defined menu blocks. Load customizations from Menu module.
@@ -2807,7 +2807,7 @@ function _system_rebuild_module_data() {
     // Add a default distribution name if the profile did not provide one. This
     // matches the default value used in install_profile_info().
     if (!isset($modules[$profile]->info['distribution_name'])) {
-      $modules[$profile]->info['distribution_name'] = 'Backdrop CMS';
+      $modules[$profile]->info['distribution_name'] = 'Silkscreen CMS';
     }
   }
 

@@ -1,3 +1,29 @@
+Silkscreen CMS is a fork of the Backdrop CMS, adding the ability to use
+additional database, cache, and configuration management backends to the base
+Backdrop system.
+
+Silkscreen tracks the Backdrop project in the tradition of Pressflow, and
+strives to maintain as much compatibility with Backdrop as possible. Modules,
+themes, and layouts created for Backdrop can be used in Silkscreen usually
+without any changes.
+
+Bugs and patches to Silkscreen can be filed at
+[the issue tracker](https://github.com/silkscreencms/silkscreen-issues) on
+GitHub. However, because Silkscreen tracks Backdrop, bugs and patches should
+be filed with the upstream Backdrop project first whenever possible.
+
+Silkscreen is available at
+[the Silkscreen project](https://github.com/silkscreencms) on GitHub.
+
+License
+-------
+Silkscreen inherits the GPL v2](http://www.gnu.org/licenses/gpl-2.0.html)
+(or higher) license from its parent.  See the LICENSE.txt file in the core
+directory for complete text. Distributions of this software may relicense it as
+any later version of the GPL.
+
+The original Backdrop README.md follows:
+
 Backdrop is a full-featured content management system that allows non-technical
 users to manage a wide variety of content. It can be used to create all kinds of
 websites including blogs, image galleries, social networks, intranets, and more.
@@ -84,5 +110,5 @@ All Backdrop code is Copyright 2001 - 2016 by the original authors.
 
 Backdrop also includes works under different copyright notices that are
 distributed according to the terms of the GNU General Public License or a
-compatible license. These individual works may have specific copyright 
+compatible license. These individual works may have specific copyright
 information noted within their source code files or directories.

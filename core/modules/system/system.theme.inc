@@ -5,12 +5,12 @@
  */
 
 /**
- * Returns HTML for the Powered by Backdrop text.
+ * Returns HTML for the Powered by Silkscreen text.
  *
  * @ingroup themeable
  */
 function theme_system_powered_by() {
-  return '<span>' . t('Powered by <a href="@poweredby">Backdrop CMS</a>', array('@poweredby' => 'https://backdropcms.org')) . '</span>';
+  return '<span>' . t('Powered by <a href="@poweredby">Silkscreen CMS</a>', array('@poweredby' => 'https://silkscreencms.org')) . '</span>';
 }
 
 /**
@@ -112,7 +112,7 @@ function theme_system_themes_page($variables) {
 
       // Make sure to provide feedback on compatibility.
       if (!empty($theme->incompatible_core)) {
-        $output .= '<div class="incompatible">' . t('This version is not compatible with Backdrop CMS !core_version and should be replaced.', array('!core_version' => BACKDROP_CORE_COMPATIBILITY)) . '</div>';
+        $output .= '<div class="incompatible">' . t('This version is not compatible with Silkscreen CMS !core_version and should be replaced.', array('!core_version' => BACKDROP_CORE_COMPATIBILITY)) . '</div>';
       }
       elseif (!empty($theme->incompatible_php)) {
         if (substr_count($theme->info['php'], '.') < 2) {
