@@ -1921,8 +1921,13 @@ function drupal_detect_baseurl($file = 'core/install.php') {
  */
 function drupal_detect_database_types() {
   watchdog_deprecated_function('drupal', __FUNCTION__);
-  $installer = backdrop_load_database_driver();
-  return array('mysql' => $installer->name());
+  $databases = drupal_get_database_types();
+
+  foreach ($databases as $driver => $installer) {
+    $databases[$driver] = $installer->name();
+  }
+
+  return $databases;
 }
 
 /**
@@ -1933,8 +1938,7 @@ function drupal_detect_database_types() {
  */
 function drupal_get_database_types() {
   watchdog_deprecated_function('drupal', __FUNCTION__);
-  $mysql = backdrop_load_database_driver();
-  return array('mysql' => $mysql);
+  return backdrop_get_database_types();
 }
 
 /**

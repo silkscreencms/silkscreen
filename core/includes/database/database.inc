@@ -1719,8 +1719,11 @@ abstract class Database {
       throw new DatabaseDriverNotSpecifiedException('Driver not specified for this database connection: ' . $key);
     }
 
+    $backends = backdrop_find_backends('database');
     $driver_class = 'DatabaseConnection_' . $driver;
-    require_once BACKDROP_ROOT . '/core/includes/database/' . $driver . '/database.inc';
+    if (array_key_exists($driver_class, $backends)) {
+      require_once $backends[$driver_class];
+    }
 
     /* @var DatabaseConnection $new_connection */
     $new_connection = new $driver_class(self::$databaseInfo[$key][$target]);
@@ -1797,21 +1800,23 @@ abstract class Database {
    *   The name of the files the driver specific class can be.
    */
   public static function loadDriverFile($driver, array $files = array()) {
-    static $base_path;
+    $backends = backdrop_find_backends('database');
 
-    if (empty($base_path)) {
-      $base_path = dirname(realpath(__FILE__));
-    }
-
-    $driver_base_path = "$base_path/$driver";
     foreach ($files as $file) {
-      // Load the base file first so that classes extending base classes will
-      // have the base class loaded.
-      foreach (array("$base_path/$file", "$driver_base_path/$file") as $filename) {
-        // The OS caches file_exists() and PHP caches require_once(), so
-        // we'll let both of those take care of performance here.
-        if (file_exists($filename)) {
-          require_once $filename;
+      $base_class_file = BACKDROP_ROOT . '/core/includes/database/' . $file;
+      foreach ($backends as $class => $class_file) {
+          if (strpos($class, $driver) && strpos($class_file, $file)) {
+          // The OS caches file_exists() and PHP caches require_once(), so
+          // we'll let both of those take care of performance here.
+
+          // Load the base file first so that classes extending base classes will
+          // have the base class loaded.
+          if (file_exists($base_class_file)) {
+            require_once $base_class_file;
+          }
+          if (file_exists($class_file)) {
+            require_once $class_file;
+          }
         }
       }
     }

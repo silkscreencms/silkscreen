@@ -1,0 +1,10 @@
+name = MySQL Database Driver
+description = Enable the use of MySQL, MariaDB and similar databases
+
+database_driver = mysql
+
+database_backend[DatabaseConnection_mysql] = database.inc
+database_backend[DatabaseTasks_mysql] = install.inc
+database_backend[InsertQuery_mysql] = query.inc
+database_backend[TruncateQuery_mysql] = query.inc
+database_backend[DatabaseSchema_mysql] = schema.inc

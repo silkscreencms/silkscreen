@@ -249,17 +249,78 @@ function backdrop_detect_baseurl($file = 'core/install.php') {
  * @return
  *  An array of database installer objects compiled into PHP.
  */
-function backdrop_load_database_driver() {
+function backdrop_load_database_driver($driver) {
   // Because we have no registry yet, we need to include the install.inc file
   // for the driver explicitly.
   require_once BACKDROP_ROOT . '/core/includes/database/database.inc';
 
-  $installer = db_installer_object('mysql');
+  $installer = db_installer_object($driver);
   if ($installer->installable()) {
     return $installer;
   }
 
   return FALSE;
+}
+
+function backdrop_get_database_list() {
+  static $info_files = array();
+  static $drivers = array();
+
+  require_once BACKDROP_ROOT . '/core/includes/database/database.inc';
+
+  $config = conf_path();
+
+  $searchdir = array(
+    'core/drivers',
+    'drivers',
+    $config . '/drivers',
+  );
+
+  if (empty($info_files)) {
+    $info_files = backdrop_scan_directories("/\.info$/", $searchdir);
+  }
+
+  foreach ($info_files as $driver_name => $driver_info) {
+    $info = backdrop_parse_info_file(BACKDROP_ROOT . '/' . $driver_info->uri);
+    $module_path = dirname($driver_info->uri);
+    if (array_key_exists('database_backend', $info) && array_key_exists('database_driver', $info)) {
+      $driver = $info['database_driver'];
+      foreach ($info['database_backend'] as $class => $filename) {
+        $drivers[$driver][$class] = BACKDROP_ROOT . '/' . $module_path . '/' . $filename;
+      }
+    }
+  }
+
+  return $drivers;
+}
+
+function backdrop_get_database_types() {
+  static $databases = array();
+
+  if (empty($databases)) {
+    $database_drivers = backdrop_get_database_list();
+    foreach ($database_drivers as $driver_name => $classes) {
+      foreach ($classes as $class_name => $file) {
+        if (strpos($class_name, 'DatabaseTasks_') === FALSE) {
+          continue;
+        }
+        require_once $file;
+        $installer = new $class_name;
+        if ($installer->installable()) {
+            $databases[$driver_name] = $installer;
+        }
+      }
+    }
+
+    // Usability: unconditionally put the MySQL driver on top.
+    if (isset($databases['mysql'])) {
+      $mysql_database = $databases['mysql'];
+      unset($databases['mysql']);
+      $databases = array('mysql' => $mysql_database) + $databases;
+    }
+  }
+
+  return $databases;
 }
 
 /**
@@ -460,7 +521,7 @@ abstract class DatabaseTasks {
   public function getFormOptions($database) {
     $form['database'] = array(
       '#type' => 'textfield',
-      '#title' => st('MySQL Database name'),
+      '#title' => st('Database name'),
       '#default_value' => empty($database['database']) ? '' : $database['database'],
       '#size' => 45,
       '#required' => TRUE,
