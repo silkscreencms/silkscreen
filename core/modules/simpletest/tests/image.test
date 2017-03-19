@@ -409,8 +409,8 @@ class ImageToolkitGdTestCase extends BackdropWebTestCase {
         // difference of 0 to 3 pixels in both dimensions.
         // @todo: Add an upper limit version check if this is fixed in PHP.
         if (version_compare(PHP_VERSION, '5.5', '>=') && $values['function'] === 'rotate' && $values['arguments'][0] % 90 != 0) {
-          $values['height']--;
-          $values['width']--;
+          $values['height']++;
+          $values['width']++;
         }
 
         // Check the real dimensions of the image first.
