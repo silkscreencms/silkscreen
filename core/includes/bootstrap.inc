@@ -1452,7 +1452,7 @@ function backdrop_find_backends($backend_type) {
       }
     }
   }
-,
+
   return $driver_classes[$backend_type];
 }
 
