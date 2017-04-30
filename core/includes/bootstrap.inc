@@ -1426,29 +1426,33 @@ function backdrop_load($type, $name) {
  */
 function backdrop_find_backends($backend_type) {
   static $info_files = array();
-  $driver_classes = array($backend_type => array());
+  static $driver_classes = array();
 
-  $config = conf_path();
+  if (!array_key_exists($backend_type, $driver_classes)) {
+    $config = conf_path();
+    $driver_classes[$backend_type] = array();
 
-  $searchdir = array(
-    'core/drivers',
-    'drivers',
-    $config . '/drivers',
-  );
+    $searchdir = array(
+      'core/drivers',
+      'drivers',
+      $config . '/drivers',
+    );
 
-  if (empty($info_files)) {
-    $info_files = backdrop_scan_directories("/\.info$/", $searchdir);
-  }
+    if (empty($info_files)) {
+      $info_files = backdrop_scan_directories("/\.info$/", $searchdir);
+    }
 
-  foreach ($info_files as $driver_name => $driver_info) {
-    $info = backdrop_parse_info_file(BACKDROP_ROOT . '/' . $driver_info->uri);
-    $module_path = dirname($driver_info->uri);
-    if (array_key_exists($backend_type . '_backend', $info)) {
-      foreach ($info[$backend_type . '_backend'] as $class => $filename) {
-        $driver_classes[$backend_type][$class] = BACKDROP_ROOT . '/' . $module_path . '/' . $filename;
+    foreach ($info_files as $driver_name => $driver_info) {
+      $info = backdrop_parse_info_file(BACKDROP_ROOT . '/' . $driver_info->uri);
+      $module_path = dirname($driver_info->uri);
+      if (array_key_exists($backend_type . '_backend', $info)) {
+        foreach ($info[$backend_type . '_backend'] as $class => $filename) {
+          $driver_classes[$backend_type][$class] = BACKDROP_ROOT . '/' . $module_path . '/' . $filename;
+        }
       }
     }
   }
+,
   return $driver_classes[$backend_type];
 }
 
