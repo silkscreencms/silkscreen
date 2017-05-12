@@ -10,6 +10,10 @@ class ConfigFileStorage implements ConfigStorageInterface {
    */
   static $storage_class = 'File';
 
+  public static function urlPrefix() {
+    return 'file';
+  }
+
   /**
    * The filesystem path for configuration objects.
    *

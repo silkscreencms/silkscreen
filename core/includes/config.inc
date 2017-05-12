@@ -243,6 +243,28 @@ function config_uninstall_config($module, $config_name = NULL) {
 }
 
 /**
+ * Collect a list of classes for each "type" (e.g., db or file).
+ *
+ * @return array
+ *   A list of ConfigurationStorage classes, keyed by the type.
+ */
+function config_get_config_storage_handlers() {
+  $handlers = &backdrop_static(__FUNCTION__, array());
+
+  // First time through, register the handlers
+  if (empty($handlers)) {
+    $backends = backdrop_find_backends('config');
+    foreach ($backends as $class => $file) {
+      require_once $file;
+      $prefix = $class::urlPrefix();
+      $handlers[$prefix][] = $class;
+    }
+  }
+
+  return $handlers;
+}
+
+/**
  * Get the storage object for the specified configuration type
  *
  * @param string $type
@@ -253,17 +275,16 @@ function config_uninstall_config($module, $config_name = NULL) {
  *   A ConfigStorageInterface object managing the specified configuration type.
  */
 function config_get_config_storage($type = 'active') {
+  $handlers = config_get_config_storage_handlers();
   $directory = config_get_config_directory($type);
   $colon_pos = strpos($directory, ':');
   if ($colon_pos !== FALSE) {
     $storage_type = substr($directory, 0, $colon_pos);
-    switch ($storage_type) {
-      case 'db':
-        return new ConfigDatabaseStorage($directory);
-      case 'file':
-        return new ConfigFileStorage(substr($directory, $colon_pos+1));
-      default:
-        // fall through
+    foreach ($handlers[$storage_type] as $class) {
+      $object = new $class($directory);
+      if (is_object($object)) {
+        return $object;
+      }
     }
   }
   return new ConfigFileStorage($directory);
@@ -760,6 +781,15 @@ interface ConfigStorageInterface {
    * @throws ConfigStorageException
    */
   public function initializeStorage();
+
+  /**
+   * Return the storage protocol for the settings string.  E.g., for file-based
+   * config that parses file://path/to/config, this function returns 'file'.
+   *
+   * @return string
+   *   The protocol part of the storage URL this class supports.
+   */
+  public static function urlPrefix();
 
   /**
    * Check that the storage managed by this object is present and functional.
