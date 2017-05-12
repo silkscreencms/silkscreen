@@ -10,6 +10,9 @@ class ConfigFileStorage implements ConfigStorageInterface {
    */
   static $storage_class = 'File';
 
+  /**
+   * {@inheritdoc}
+   */
   public static function urlPrefix() {
     return 'file';
   }

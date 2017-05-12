@@ -11,6 +11,9 @@ class ConfigDatabaseStorage implements ConfigStorageInterface {
    */
   static $storage_class = 'Database';
 
+  /**
+   * {@inheritdoc}
+   */
   public static function urlPrefix() {
     return 'db';
   }
