@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * Tests of the ConfigStorageInterface compliant classes.
+ */
+
+class ConfigStorageTestCase extends BackdropWebTestCase {
+
+  public function testStorageObjects() {
+    global $config_directories;
+
+    $config_directories['test-db'] = 'db://test_config';
+    $config_directories['test-file'] = 'file://files/simpletest/' . $this->fileDirectoryName . '/config_test';
+
+    $db_config = config_get_config_storage('test-db');
+    $this->assertTrue(get_class($db_config) == 'ConfigDatabaseStorage', 'Created database config storage.');
+
+    $file_config = config_get_config_storage('test-file');
+    $this->assertTrue(get_class($file_config) == 'ConfigFileStorage', 'Created file config storage.');
+  }
+}
