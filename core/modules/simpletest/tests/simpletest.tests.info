@@ -406,6 +406,12 @@ description = low-level object tests of the Config class and friends.
 group = System
 file = config_obj.test
 
+[ConfigStorageTestCase]
+name = Config storage object tests
+description = low-level object tests of the ConfigStorageInterface classes
+group = System
+file = config_storage_obj.test
+
 [DatabaseConnectionTestCase]
 name = Connection tests
 description = Tests of the core database system.
