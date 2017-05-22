@@ -299,19 +299,28 @@ function config_get_config_storage_handlers() {
  *   A ConfigStorageInterface object managing the specified configuration type.
  */
 function config_get_config_storage($type = 'active') {
-  $handlers = config_get_config_storage_handlers();
+  static $stores = array();
+
   $directory = config_get_config_directory($type);
-  $colon_pos = strpos($directory, ':');
-  if ($colon_pos !== FALSE) {
-    $storage_type = substr($directory, 0, $colon_pos);
-    foreach ($handlers[$storage_type] as $class) {
-      $object = new $class($directory);
-      if (is_object($object)) {
-        return $object;
+  if (!array_key_exists($directory, $stores)) {
+    $handlers = config_get_config_storage_handlers();
+    $colon_pos = strpos($directory, ':');
+    if ($colon_pos !== FALSE) {
+      $storage_type = substr($directory, 0, $colon_pos);
+      foreach ($handlers[$storage_type] as $class) {
+        $object = new $class($directory);
+        if (is_object($object)) {
+          $stores[$directory] = $object;
+          break;
+        }
       }
     }
+    else {
+      $stores[$directory] = new ConfigFileStorage($directory);
+    }
   }
-  return new ConfigFileStorage($directory);
+
+  return $stores[$directory];
 }
 
 /**
