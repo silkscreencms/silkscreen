@@ -144,8 +144,12 @@ class DatabaseLog {
   public function findCaller() {
     $stack = debug_backtrace();
     $stack_count = count($stack);
+    $includes_db_dir = 'includes' . DIRECTORY_SEPARATOR . 'database';
+    $drivers_dir = 'drivers' . DIRECTORY_SEPARATOR;
     for ($i = 0; $i < $stack_count; ++$i) {
-      if (!empty($stack[$i]['file']) && strpos($stack[$i]['file'], 'includes' . DIRECTORY_SEPARATOR . 'database') === FALSE) {
+      if (!empty($stack[$i]['file']) &&
+        strpos($stack[$i]['file'], $includes_db_dir) === FALSE &&
+        strpos($stack[$i]['file'], $drivers_dir) === FALSE) {
         $stack[$i] += array('args' => array());
         break;
       }
