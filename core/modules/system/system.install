@@ -178,7 +178,7 @@ function system_requirements($phase) {
     $tasks = new $class();
     $dbinfo = $t('!system version !version', array('!system' => $tasks->name(), '!version' => Database::getConnection()->version()));
     $requirements['database_system'] = array(
-      'title' => $t('MySQL Database'),
+      'title' => $t('Database Version'),
       'severity' => REQUIREMENT_INFO,
       'value' => $dbinfo,
     );
@@ -626,6 +626,10 @@ function _system_check_db_utf8mb4_requirements($phase) {
 
   $connection = Database::getConnection();
   $t = get_t();
+  if ($connection->driver() != 'mysql') {
+    return array();
+  }
+
   $requirements['title'] = $t('MySQL Database 4-byte UTF-8 support');
 
   $utf8mb4_active = $connection->utf8mb4IsActive();
