@@ -341,6 +341,9 @@ class views_plugin_query_default extends views_plugin_query {
       $alias = $alias_base . '_' . $count++;
     }
 
+    // Ensure the table alias is no longer than 60 characters long.
+    $alias = (strlen($alias) > 60) ? substr($alias, -60) : $alias;
+
     // Make sure this join is adjusted for our relationship.
     if ($link_point && isset($this->relationships[$link_point])) {
       $join = $this->adjust_join($join, $link_point);
