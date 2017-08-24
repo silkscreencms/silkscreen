@@ -6,9 +6,14 @@
 class ConfigFileStorage implements ConfigStorageInterface {
 
   /**
-   *
+   * {@inheritdoc}
    */
   static $storage_class = 'File';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $immutable = FALSE;
 
   /**
    * {@inheritdoc}
@@ -49,6 +54,13 @@ class ConfigFileStorage implements ConfigStorageInterface {
       '%directory' => $this->directory,
     )));
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isImmutable() {
+    return $this->immutable;
   }
 
   /**

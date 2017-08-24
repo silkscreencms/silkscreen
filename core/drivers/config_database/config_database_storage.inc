@@ -11,6 +11,15 @@ class ConfigDatabaseStorage implements ConfigStorageInterface {
    */
   static $storage_class = 'Database';
 
+  protected $immutable = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isImmutable() {
+    return $this->immutable;
+  }
+
   /**
    * {@inheritdoc}
    */

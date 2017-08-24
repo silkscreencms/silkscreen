@@ -833,6 +833,14 @@ interface ConfigStorageInterface {
   public function isInitialized();
 
   /**
+   * Returns whether data in this object can be changed.
+   *
+   * @return bool
+   *   TRUE if the object cannot be changed, FALSE if it can be changed.
+   */
+  public function isImmutable();
+
+  /**
    * Returns whether a configuration object exists.
    *
    * @param string $name
