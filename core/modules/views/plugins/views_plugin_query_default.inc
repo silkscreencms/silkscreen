@@ -1328,7 +1328,15 @@ class views_plugin_query_default extends views_plugin_query {
     if ($this->has_aggregate && (!empty($this->groupby) || !empty($non_aggregates))) {
       $groupby = array_unique(array_merge($this->groupby, $non_aggregates));
       foreach ($groupby as $field) {
-        $query->groupBy($field);
+        // Base fields are not aliased like other fields and when they are used
+        // in joins become ambiguous. Specifiy the base_table when adding a
+        // GROUP BY with the base field.
+        if ($field == $this->base_field) {
+          $query->groupBy($this->base_table . '.' .  $this->base_field);
+        }
+        else {
+          $query->groupBy($field);
+        }
       }
       if (!empty($this->having) && $condition = $this->build_condition('having')) {
         $query->havingCondition($condition);
