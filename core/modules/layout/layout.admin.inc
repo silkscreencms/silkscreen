@@ -91,7 +91,7 @@ function layout_list_page() {
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => $rows,
-    '#attributes' => array('id' => 'layout-list'),
+    '#attributes' => array('class' =>   array('layout-list')),
     '#empty' => t('No layouts have been created yet.'),
   );
   return $page;
@@ -969,7 +969,7 @@ function layout_block_add_page(Layout $layout, $renderer_name, $region_name, $bl
 
   $output['search'] = array(
     '#type' => 'textfield',
-    '#title' => 'Search',
+    '#title' => t('Search'),
     '#attributes' => array(
       'id' => array('layout-block-list-search'),
     ),
