@@ -763,7 +763,7 @@ function system_preprocess_page_components(&$variables) {
   if ($child_delta == 'action_links' || $child_delta == 'title_combo') {
     $variables['action_links'] = menu_local_actions();
   }
-  
+
   if ($child_delta == 'messages' || $child_delta == 'title_combo') {
     $variables['messages'] = theme('status_messages');
   }

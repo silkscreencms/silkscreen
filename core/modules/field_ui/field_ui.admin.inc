@@ -10,6 +10,9 @@
  * @see field_ui_menu()
  */
 function field_ui_manage_display_title($entity_type, $machine_name) {
+  if ($machine_name === 'default') {
+    return t('Default');
+  }
   $view_mode = entity_view_mode_load($entity_type, $machine_name);
   return $view_mode['label'];
 }
@@ -314,7 +317,7 @@ function field_ui_field_overview_form($form, &$form_state, $entity_type, $bundle
         '#type' => 'link',
         '#title' => t($field_types[$field['type']]['label']),
         '#href' => $admin_field_path . '/field-settings',
-        '#options' => array('attributes' => array('title' => t('Edit field settings.'))),
+        '#options' => array('attributes' => array('title' => t('Configure field settings.'))),
       ),
       'widget_type' => array(
         '#type' => 'link',
@@ -325,9 +328,9 @@ function field_ui_field_overview_form($form, &$form_state, $entity_type, $bundle
     );
     $links = array();
     $links['edit'] = array(
-      'title' => t('Edit'),
+      'title' => t('Configure'),
       'href' => $admin_field_path,
-      'attributes' => array('title' => t('Edit instance settings.')),
+      'attributes' => array('title' => t('Configure instance settings.')),
     );
     $links['delete'] = array(
       'title' => t('Delete'),
@@ -1118,7 +1121,7 @@ function field_ui_display_form($form, &$form_state, $entity_type, $bundle, $view
             ),
           ),
           '#op' => 'edit',
-          // Do not check errors for the 'Edit' button, but make sure we get
+          // Do not check errors for the 'Configure' button, but make sure we get
           // the value of the 'formatter type' select.
           '#limit_validation_errors' => array(array('fields', $name, 'type')),
           '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
