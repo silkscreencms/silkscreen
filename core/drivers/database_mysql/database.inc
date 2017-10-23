@@ -321,7 +321,7 @@ class DatabaseConnection_mysql extends DatabaseConnection {
       'A' => '%p',
     );
     $format = strtr($format, $replace);
-    return "DATE_FORMAT(DATE_ADD('19700101', INTERVAL $field SECOND), '$format')";
+    return "DATE_FORMAT($field, '$format')";
   }
 
   public function dateExtractSql($field, $extract_type) {
