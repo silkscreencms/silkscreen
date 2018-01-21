@@ -699,6 +699,9 @@ function system_install() {
   module_list(TRUE);
   module_implements_reset();
 
+  // Ensure the schema versions are not based on a previous module list.
+  backdrop_static_reset('drupal_get_schema_versions');
+
   // Load system theme data appropriately.
   system_rebuild_theme_data();
 
@@ -2955,6 +2958,16 @@ function system_update_1062() {
   $config->clear('user_timezone_configurable');
   $config->clear('user_timezone_default');
   $config->clear('user_timezone_warn');
+  $config->save();
+}
+
+/**
+ * Set a default value for the X-Frame-Options header. This will not allow the
+ * site to be rendered in an iframe on another domain unless specified.
+ */
+function system_update_1063() {
+  $config = config('system.core');
+  $config->set('x_frame_options', 'SAMEORIGIN');
   $config->save();
 }
 

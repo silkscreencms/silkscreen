@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Functions for form and batch generation and processing.
@@ -106,7 +105,8 @@
  *   generate the same form (or very similar forms) using different $form_ids
  *   can implement hook_forms(), which maps different $form_id values to the
  *   proper form constructor function. Examples may be found in node_forms(),
- *   and search_forms().
+ *   and search_forms(). hook_forms() can also be used to define forms in
+ *   classes.
  * @param ...
  *   Any additional arguments are passed on to the functions called by
  *   backdrop_get_form(), including the unique form constructor function. For
@@ -817,7 +817,7 @@ function backdrop_retrieve_form($form_id, &$form_state) {
     }
     if (isset($form_definition['callback'])) {
       $callback = $form_definition['callback'];
-      $form_state['build_info']['base_form_id'] = $callback;
+      $form_state['build_info']['base_form_id'] = isset($form_definition['base_form_id']) ? $form_definition['base_form_id'] : $callback;
     }
     // In case $form_state['wrapper_callback'] is not defined already, we also
     // allow hook_forms() to define one.
@@ -847,7 +847,7 @@ function backdrop_retrieve_form($form_id, &$form_state) {
   // the actual form builder function ($callback) expects. This allows for
   // pre-populating a form with common elements for certain forms, such as
   // back/next/save buttons in multi-step form wizards. See backdrop_build_form().
-  if (isset($form_state['wrapper_callback'])) {
+  if (isset($form_state['wrapper_callback']) && is_callable($form_state['wrapper_callback'])) {
     $form = call_user_func_array($form_state['wrapper_callback'], $args);
     // Put the prepopulated $form into $args.
     $args[0] = $form;
@@ -1192,7 +1192,7 @@ function backdrop_validate_form($form_id, &$form, &$form_state) {
   // If the session token was set by backdrop_prepare_form(), ensure that it
   // matches the current user's session. This is duplicate to code in
   // form_builder() but left to protect any custom form handling code.
-  if (isset($form['#token'])) {
+  if (!empty($form['#token'])) {
     if (!backdrop_valid_token($form_state['values']['form_token'], $form['#token']) || !empty($form_state['invalid_token'])) {
       _backdrop_invalid_token_set_form_error();
       // Stop here and don't run any further validation handlers, because they
@@ -1871,7 +1871,7 @@ function form_builder($form_id, &$element, &$form_state) {
       // If the session token was set by backdrop_prepare_form(), ensure that it
       // matches the current user's session.
       $form_state['invalid_token'] = FALSE;
-      if (isset($element['#token'])) {
+      if (!empty($element['#token'])) {
         if (empty($form_state['input']['form_token']) || !backdrop_valid_token($form_state['input']['form_token'], $element['#token'])) {
           // Set an early form error to block certain input processing since that
           // opens the door for CSRF vulnerabilities.
@@ -2584,6 +2584,27 @@ function form_type_select_value($element, $input = FALSE) {
 }
 
 /**
+ * Determines the value for a textarea form element.
+ *
+ * @param array $element
+ *   The form element whose value is being populated.
+ * @param mixed $input
+ *   The incoming input to populate the form element. If this is FALSE,
+ *   the element's default value should be returned.
+ *
+ * @return string
+ *   The data that will appear in the $element_state['values'] collection
+ *   for this element. Return nothing to use the default.
+ */
+function form_type_textarea_value($element, $input = FALSE) {
+  if ($input !== FALSE && $input !== NULL) {
+    // This should be a string, but allow other scalars since they might be
+    // valid input in programmatic form submissions.
+    return is_scalar($input) ? (string) $input : '';
+  }
+}
+
+/**
  * Determines the value for a textfield form element.
  *
  * @param $element
@@ -3000,7 +3021,7 @@ function form_process_password_confirm($element) {
 function password_confirm_validate($element, &$element_state) {
   $pass1 = trim($element['pass1']['#value']);
   $pass2 = trim($element['pass2']['#value']);
-  if (!empty($pass1) || !empty($pass2)) {
+  if (strlen($pass1) > 0 || strlen($pass2) > 0) {
     if (strcmp($pass1, $pass2)) {
       form_error($element, t('The specified passwords do not match.'));
     }
@@ -3542,6 +3563,7 @@ function form_process_tableselect($element) {
             '#return_value' => $key,
             '#default_value' => isset($value[$key]) ? $key : NULL,
             '#attributes' => $element['#attributes'],
+            '#ajax' => isset($element['#ajax']) ? $element['#ajax'] : NULL,
           );
         }
         else {

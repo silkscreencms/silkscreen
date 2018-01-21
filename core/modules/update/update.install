@@ -155,7 +155,7 @@ function _update_requirement_check($project, $type) {
       else {
         $version_available = t('Updates available');
       }
-      if (update_manager_access()) {
+      if (update_manager_access() && module_exists('project_installer')) {
         $requirement_label .= ' (' . l($version_available, 'admin/modules/update') . ')';
       }
       else {
@@ -214,6 +214,16 @@ function update_update_1001() {
 function update_update_1002() {
   $config = config('update.settings');
   $config->set('_config_static', true);
+  $config->save();
+}
+
+/**
+ * Removes the testing-only values from the update.settings config.
+ */
+function update_update_1003() {
+  $config = config('update.settings');
+  $config->clear('update_xml_map');
+  $config->clear('update_system_info');
   $config->save();
 }
 

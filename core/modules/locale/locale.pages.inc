@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Interface translation summary, editing and deletion user interfaces.
@@ -172,12 +171,9 @@ function locale_translation_filters() {
 
   // Get all languages, except English
   backdrop_static_reset('language_list');
-  $languages = language_list(TRUE);
-  $language_options = array();
-  foreach ($languages as $langcode => $language) {
-    if ($langcode != 'en' || locale_translate_english()) {
-      $language_options[$langcode] = $language->name;
-    }
+  $language_options = language_list(TRUE, TRUE);
+  if (!locale_translate_english() && isset($language_options['en'])) {
+    unset($language_options['en']);
   }
 
   $filters['string'] = array(
@@ -380,7 +376,7 @@ function locale_translate_edit_form_submit($form, &$form_state) {
     $translation = db_query("SELECT translation FROM {locales_target} WHERE lid = :lid AND language = :language", array(':lid' => $lid, ':language' => $key))->fetchField();
     if (!empty($value)) {
       // Only update or insert if we have a value to use.
-      if (!empty($translation)) {
+      if (is_string($translation)) {
         db_update('locales_target')
           ->fields(array(
             'translation' => $value,

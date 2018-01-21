@@ -2065,9 +2065,15 @@ function format_rss_item($title, $link, $description, $args = array()) {
  *     - 'key': element name
  *     - 'value': element contents
  *     - 'attributes': associative array of element attributes
+ *     - 'encoded': TRUE if 'value' is already encoded
  *
- *   In both cases, 'value' can be a simple string, or it can be another array
- *   with the same format as $array itself for nesting.
+ * In both cases, 'value' can be a simple string, or it can be another array
+ * with the same format as $array itself for nesting.
+ *
+ * If 'encoded' is TRUE it is up to the caller to ensure that 'value' is either
+ * entity-encoded or CDATA-escaped. Using this option is not recommended when
+ * working with untrusted user input, since failing to escape the data
+ * correctly has security implications.
  *
  * @return string
  *  A string of XML representing the elements passed in.
@@ -2083,7 +2089,7 @@ function format_xml_elements($array) {
         }
 
         if (isset($value['value']) && $value['value'] != '') {
-          $output .= '>' . (is_array($value['value']) ? format_xml_elements($value['value']) : check_plain($value['value'])) . '</' . $value['key'] . ">\n";
+          $output .= '>' . (is_array($value['value']) ? format_xml_elements($value['value']) : (!empty($value['encoded']) ? $value['value'] : check_plain($value['value']))) . '</' . $value['key'] . ">\n";
         }
         else {
           $output .= " />\n";
@@ -2909,6 +2915,15 @@ function backdrop_deliver_html_page($page_callback_result) {
   // Send appropriate HTTP-Header for browsers and search engines.
   global $language;
   backdrop_add_http_header('Content-Language', $language->langcode);
+
+  // By default, do not allow the site to be rendered in an iframe on another
+  // domain, but provide a variable to override this. If the code running for
+  // this page request already set the X-Frame-Options header earlier, don't
+  // overwrite it here.
+  $frame_options = config_get('system.core', 'x_frame_options');
+  if ($frame_options && is_null(backdrop_get_http_header('X-Frame-Options'))) {
+    backdrop_add_http_header('X-Frame-Options', $frame_options);
+  }
 
   // Menu status constants are integers; page content is a string or array.
   if (is_int($page_callback_result)) {
@@ -4173,7 +4188,11 @@ function backdrop_html_id($id) {
   // be merged with content already on the base page. The HTML IDs must be
   // unique for the fully merged content. Therefore, initialize $seen_ids to
   // take into account IDs that are already in use on the base page.
-  $seen_ids_init = &backdrop_static(__FUNCTION__ . ':init');
+  static $backdrop_static_fast;
+  if (!isset($backdrop_static_fast['seen_ids_init'])) {
+    $backdrop_static_fast['seen_ids_init'] = &backdrop_static(__FUNCTION__ . ':init');
+  }
+  $seen_ids_init = &$backdrop_static_fast['seen_ids_init'];
   if (!isset($seen_ids_init)) {
     // Ideally, Backdrop would provide an API to persist state information about
     // prior page requests in the database, and we'd be able to add this
@@ -4218,7 +4237,10 @@ function backdrop_html_id($id) {
       }
     }
   }
-  $seen_ids = &backdrop_static(__FUNCTION__, $seen_ids_init);
+  if (!isset($backdrop_static_fast['seen_ids'])) {
+    $backdrop_static_fast['seen_ids'] = &backdrop_static(__FUNCTION__, $seen_ids_init);
+  }
+  $seen_ids = &$backdrop_static_fast['seen_ids'];
 
   $id = strtr(backdrop_strtolower($id), array(' ' => '-', '_' => '-', '[' => '-', ']' => ''));
 
@@ -4403,7 +4425,12 @@ function backdrop_region_class($region) {
  *       happened later in the page request gets added to the page after one for
  *       which backdrop_add_js() happened earlier in the page request.
  *   - defer: If set to TRUE, the defer attribute is set on the <script>
- *     tag. Defaults to FALSE.
+ *     tag. Defaults to FALSE. Note that setting this to TRUE will disable
+ *     preprocessing as though the 'preprocess' option was set to FALSE.
+ *   - attributes: An associative array of attributes for the <script> tag.
+ *     This may be used to add 'async' or custom attributes. Note that
+ *     setting any attributes will disable preprocessing as though the
+ *     'preprocess' option was set to FALSE.
  *   - cache: If set to FALSE, the JavaScript file is loaded anew on every page
  *     call; in other words, it is not cached. Used only when 'type' references
  *     a JavaScript file. Defaults to TRUE.
@@ -4434,8 +4461,9 @@ function backdrop_add_js($data = NULL, $options = NULL) {
   }
   $options += backdrop_js_defaults($data);
 
-  // Preprocess can only be set if caching is enabled.
-  $options['preprocess'] = $options['cache'] ? $options['preprocess'] : FALSE;
+  // Preprocess can only be set if caching is enabled and no attributes
+  // nor defer tag are set.
+  $options['preprocess'] = $options['cache'] && empty($options['attributes']) && empty($options['defer']) ? $options['preprocess'] : FALSE;
 
   // Tweak the weight so that files of the same weight are included in the
   // order of the calls to backdrop_add_js().
@@ -4476,6 +4504,7 @@ function backdrop_add_js($data = NULL, $options = NULL) {
           'preprocess' => TRUE,
           'cache' => TRUE,
           'defer' => FALSE,
+          'attributes' => array(),
           'browsers' => array(),
           'version' => BACKDROP_VERSION,
         ),
@@ -4545,6 +4574,7 @@ function backdrop_js_defaults($data = NULL) {
     'preprocess' => TRUE,
     'version' => NULL,
     'data' => $data,
+    'attributes' => array(),
     'browsers' => array(),
   );
 }
@@ -4720,6 +4750,11 @@ function backdrop_pre_render_scripts($elements) {
           case 'external':
             $element['#attributes']['src'] = $item['data'];
             break;
+        }
+
+        // Attributes may only be set if this script is output independently.
+        if (!empty($element['#attributes']['src']) && !empty($item['attributes'])) {
+          $element['#attributes'] += $item['attributes'];
         }
 
         $elements[] = $element;
@@ -6929,20 +6964,24 @@ function element_info_property($type, $property_name, $default = NULL) {
  *   An array of keys to sort by. Values must be PHP sorting type flags,
  *   either SORT_NUMERIC or SORT_STRING, and default to SORT_NUMERIC if an
  *   unindexed array is passed in.
+ * @param string $dir
+ *   The sort direction. Values must be either SORT_ASC or SORT_DESC.
  *
  * Example usage:
  * @code
  * // Sort by a single numeric key:
  * backdrop_sort($my_array, array('weight' => SORT_NUMERIC));
  *
- * // Short-hand sort by a numeric key:
+ * // Shorthand sort by a numeric key:
  * backdrop_sort($my_array, array('weight'));
  *
  * // Sort by numeric and string keys.
  * backdrop_sort($my_array, array('weight' => SORT_NUMERIC, 'title' => SORT_STRING));
  * @endcode
+ *
+ * @since 1.9.0 The $dir parameter was added.
  */
-function backdrop_sort(array &$array, array $keys = array('weight')) {
+function backdrop_sort(array &$array, array $keys = array('weight'), $dir = SORT_ASC) {
   // Ensure all keys have a sort value.
   $new_keys = array();
   foreach ($keys as $index => $sort) {
@@ -6970,7 +7009,7 @@ function backdrop_sort(array &$array, array $keys = array('weight')) {
     $key_sort = reset($keys);
 
     if ($key_sort === SORT_STRING) {
-      uasort($array, function($a, $b) use ($key) {
+      uasort($array, function($a, $b) use ($key, $dir) {
         if (!is_array($a) || !is_array($b)) {
           return 0;
         }
@@ -6980,11 +7019,12 @@ function backdrop_sort(array &$array, array $keys = array('weight')) {
         if (!isset($b[$key])) {
           $b[$key] = '';
         }
-        return strnatcasecmp($a[$key], $b[$key]);
+        $cmp = strnatcasecmp($a[$key], $b[$key]);
+        return ($dir == SORT_DESC) ? -$cmp : $cmp;
       });
     }
     else {
-      uasort($array, function($a, $b) use ($key) {
+      uasort($array, function($a, $b) use ($key, $dir) {
         if (!is_array($a) || !is_array($b)) {
           return 0;
         }
@@ -6995,7 +7035,8 @@ function backdrop_sort(array &$array, array $keys = array('weight')) {
           $b[$key] = 0;
         }
         if ($a[$key] != $b[$key]) {
-          return $a[$key] < $b[$key] ? -1 : 1;
+          $cmp = $a[$key] < $b[$key] ? -1 : 1;
+          return ($dir == SORT_DESC) ? -$cmp : $cmp;
         }
         // Equal values, return 0.
         return 0;
@@ -7005,7 +7046,7 @@ function backdrop_sort(array &$array, array $keys = array('weight')) {
   // If doing a multiple-key comparison, use a recursive callback.
   else {
     $keys_map = array_keys($keys);
-    $recursive_callback = function ($a, $b, $key_index = 0) use ($keys, $keys_map, &$recursive_callback) {
+    $recursive_callback = function ($a, $b, $key_index = 0) use ($keys, $keys_map, $dir, &$recursive_callback) {
       $key = $keys_map[$key_index];
       if (!is_array($a) || !is_array($b)) {
         return 0;
@@ -7023,12 +7064,14 @@ function backdrop_sort(array &$array, array $keys = array('weight')) {
         }
       }
       else {
+        $cmp = 0;
         if ($keys[$key] === SORT_STRING) {
-          return strnatcasecmp($a[$key], $b[$key]);
+          $cmp = strnatcasecmp($a[$key], $b[$key]);
         }
         else {
-          return ($a[$key] < $b[$key]) ? -1 : 1;
+          $cmp = ($a[$key] < $b[$key]) ? -1 : 1;
         }
+        return ($dir == SORT_DESC) ? -$cmp : $cmp;
       }
       return 0;
     };
