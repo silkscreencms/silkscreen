@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * System monitoring and logging for administrators.
@@ -140,9 +139,11 @@ function dblog_watchdog(array $log_entry) {
         'timestamp' => $log_entry['timestamp'],
       ))
       ->execute();
-    }
+  }
   catch (Exception $e) {
-    // May not be initialized yet.
+    // Exception is ignored so that watchdog does not break pages during the
+    // installation process or is not able to create the watchdog table during
+    // installation.
   }
 }
 

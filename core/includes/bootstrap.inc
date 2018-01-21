@@ -753,6 +753,16 @@ function backdrop_valid_http_host($host) {
 }
 
 /**
+ * Checks whether an HTTPS request is being served.
+ *
+ * @return bool
+ *   TRUE if the request is HTTPS, FALSE otherwise.
+ */
+function backdrop_is_https() {
+  return isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on';
+}
+
+/**
  * Sets the base URL, cookie domain, and session name from configuration.
  */
 function backdrop_settings_initialize() {
@@ -774,18 +784,28 @@ function backdrop_settings_initialize() {
   // Convert simplified database settings into the full databases array.
   if (!empty($database) && $database !== 'mysql://user:pass@localhost/database_name') {
     $database_parts = parse_url($database);
+    if (!$database_parts) {
+      trigger_error('The database setting could not be parsed. Please check the $database setting in settings.php.', E_USER_ERROR);
+    }
     $databases['default']['default'] = array(
       'driver' => $database_parts['scheme'],
-      'database' => substr($database_parts['path'], 1), // Remove leading slash.
-      'username' => isset($database_parts['user']) ? $database_parts['user'] : '',
-      'password' => isset($database_parts['pass']) ? $database_parts['pass'] : '',
+      'database' => rawurldecode(substr($database_parts['path'], 1)), // Remove leading slash.
+      'username' => isset($database_parts['user']) ? rawurldecode($database_parts['user']) : '',
+      'password' => isset($database_parts['pass']) ? rawurldecode($database_parts['pass']) : '',
       'host' => $database_parts['host'],
       'port' => isset($database_parts['port']) ? $database_parts['port'] : NULL,
       'prefix' => !empty($database_prefix) ? $database_prefix : '',
     );
+    $required_parts = array('driver', 'database', 'username', 'host');
+    foreach ($required_parts as $key) {
+      if (!$databases['default']['default'][$key]) {
+        $missing_field = ($key == 'database') ? 'name' : $key;
+        trigger_error('Could not find a value for the database "' . $missing_field . '" setting. Please check the $database setting in settings.php.', E_USER_ERROR);
+      }
+    }
   }
 
-  $is_https = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on';
+  $is_https = backdrop_is_https();
 
   // Load settings specified by the server, if present
   if (isset($_SERVER['BACKDROP_SETTINGS'])) {
@@ -2010,6 +2030,23 @@ function backdrop_unpack($obj, $field = 'data') {
  * available to code that needs localization. See st() and get_t() for
  * alternatives.
  *
+ * @section sec_context String context
+ * Matching source strings are normally only translated once, and the same
+ * translation is used everywhere that has a matching string. However, in some
+ * cases, a certain English source string needs to have multiple translations.
+ * One example of this is the string "May", which could be used as either a
+ * full month name or a 3-letter abbreviated month. In other languages where
+ * the month name for May has more than 3 letters, you would need to provide
+ * two different translations (one for the full name and one abbreviated), and
+ * the correct form would need to be chosen, depending on how "May" is being
+ * used. To facilitate this, the "May" string should be provided with two
+ * different contexts in the $options parameter when calling t(). For example:
+ * @code
+ * t('May', array(), array('context' => 'Long month name')
+ * t('May', array(), array('context' => 'Abbreviated month name')
+ * @endcode
+ * See https://localize.drupal.org/node/2109 for more information.
+ *
  * @param $string
  *   A string containing the English string to translate.
  * @param $args
@@ -2030,8 +2067,9 @@ function backdrop_unpack($obj, $field = 'data') {
  *   An associative array of additional options, with the following elements:
  *   - 'langcode' (defaults to the current language): The language code to
  *     translate to a language other than what is used to display the page.
- *   - 'context' (defaults to the empty context): The context the source string
- *     belongs to.
+ *   - 'context' (defaults to the empty context): A string giving the context
+ *     that the source string belongs to. See @ref sec_context above for more
+ *     information.
  *
  * @return
  *   The translated string.
@@ -2343,10 +2381,10 @@ function watchdog_exception($type, Exception $exception, $message = NULL, $varia
  */
 function watchdog_severity_enabled($severity = WATCHDOG_NOTICE) {
   try {
-    $enabled_severity_levels = config('system.core')->get('watchdog_enabled_severity_levels');
+    $enabled_severity_levels = function_exists('config') ? config('system.core')->get('watchdog_enabled_severity_levels') : array();
   }
   catch (Exception $e) {
-    $enabled_severity_levels = NULL;
+    $enabled_severity_levels = array();
   }
 
   // This may be called before system.core, such as when running update.php or
@@ -3534,11 +3572,11 @@ function language_multilingual() {
  *   (optional) Whether to return only enabled languages.
  * @param $option_list
  *   (optional) Whether to return a list of options instead of objects. This
- *   list is suitable for use in a select list #options array.
+ *   list is suitable for use in a select list #options array. This list is
+ *   ordered by weight and then language name.
  *
- * @return stdClass[]
- *   An associative array of languages, keyed by the language code, ordered by
- *   weight ascending and name ascending.
+ * @return (stdClass|string)[]
+ *   An associative array of languages, keyed by the language code.
  */
 function language_list($only_enabled = FALSE, $option_list = FALSE) {
   $languages = &backdrop_static(__FUNCTION__);
@@ -3594,6 +3632,10 @@ function language_list($only_enabled = FALSE, $option_list = FALSE) {
   if ($option_list) {
     $list = array();
     $this_list = $only_enabled ? $languages['enabled'] : $languages['all'];
+    // backdrop_sort() needed for ordering, but common.inc may not be loaded
+    // in very early bootstrap. Include only if returning an option list.
+    require_once __DIR__ . '/common.inc';
+    backdrop_sort($this_list, array('weight' => SORT_NUMERIC, 'name' => SORT_STRING));
     foreach ($this_list as $language) {
       $list[$language->langcode] = $language->name;
     }
@@ -3833,8 +3875,15 @@ function ip_address() {
         // Eliminate all trusted IPs.
         $untrusted = array_diff($forwarded, $reverse_proxy_addresses);
 
-        // The right-most IP is the most specific we can trust.
-        $ip_address = array_pop($untrusted);
+        if (!empty($untrusted)) {
+          // The right-most IP is the most specific we can trust.
+          $ip_address = array_pop($untrusted);
+        }
+        else {
+          // All IP addresses in the forwarded array are configured proxy IPs
+          // (and thus trusted). We take the leftmost IP.
+          $ip_address = array_shift($forwarded);
+        }
       }
     }
   }

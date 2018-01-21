@@ -1086,10 +1086,10 @@ function install_settings_form_submit($form, &$form_state) {
 
   // Update global settings array and save.
   $db_settings = $form_state['storage']['database'];
-  $db_username = (empty($db_settings['username'])) ? '' : $db_settings['username'] . ':' . $db_settings['password'] . '@';
+  $db_username = (empty($db_settings['username'])) ? '' : rawurlencode($db_settings['username']) . ':' . rawurlencode($db_settings['password']) . '@';
   $db_host = empty($db_settings['host']) ? '': ($db_settings['host'] . ($db_settings['port'] ? (':' . $db_settings['port']) : '') . '/');
   $settings['database'] = array(
-    'value' => $db_settings['driver'] . '://' . $db_username . $db_host . $db_settings['database'],
+    'value' => $db_settings['driver'] . '://' . $db_username . $db_host . rawurlencode($db_settings['database']),
     'required' => TRUE,
   );
   $settings['database_prefix'] = array(

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Administrative screens and processing functions of the Installer module.
@@ -59,7 +58,7 @@
  * @see installer_menu()
  * @ingroup forms
  */
-function installer_manager_update_form($form, $form_state = array(), $context) {
+function installer_manager_update_form($form, $form_state, $context) {
   switch ($context) {
     case 'module':
       backdrop_set_title('Update modules');
