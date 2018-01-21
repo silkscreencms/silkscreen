@@ -115,7 +115,7 @@ $url += array(
 );
 $url = (object)array_map('urldecode', $url);
 $db_spec = array(
-  'driver' => 'mysql',
+  'driver' => $url->scheme,
   'username' => $url->user,
   'password' => $url->pass,
   'port' => $url->port,
