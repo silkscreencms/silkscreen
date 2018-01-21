@@ -2,14 +2,14 @@
 <?php
 
 /**
- * Install Backdrop through the command line.
+ * Install Silkscreen through the command line.
  */
 $script = basename(array_shift($_SERVER['argv']));
 
 if (in_array('--help', $_SERVER['argv']) || empty($_SERVER['argv'])) {
   echo <<<EOF
 
-Install Backdrop through the command line.
+Install Silkscreen through the command line.
 
 Examples:
 ./core/scripts/install.sh --db-url=mysql://root:pass@localhost:port/dbname
@@ -19,7 +19,7 @@ profile                                   The install profile you wish to run. D
 key=value...                              Any additional settings you wish to pass to the profile. The key is in the form [form name].[parameter name]
 
 Options:
---root                                    Set the working directory for the script to the specified path. Required if running this script from a directory other than the Backdrop root.
+--root                                    Set the working directory for the script to the specified path. Required if running this script from a directory other than the Silkscreen root.
 --account-mail                            UID 1 email. Defaults to admin@example.com
 --account-name                            UID 1 name. Defaults to admin
 --account-pass                            UID 1 pass. Defaults to a randomly generated password.
@@ -29,7 +29,7 @@ Options:
 
 --locale=<en-GB>                          A short language code. Sets the default site language. Language files must already be present.
 --site-mail                               From: for system mailings. Defaults to admin@example.com
---site-name                               Defaults to Backdrop
+--site-name                               Defaults to Silkscreen
 
 \n
 EOF;
@@ -52,13 +52,13 @@ $options = array(
   'account-mail' => 'admin@example.com',
   'account-name' => 'admin',
   'account-pass' => md5(microtime() . mt_rand()),
-  'site-name' => 'Backdrop',
+  'site-name' => 'Silkscreen',
   'clean-url' => '1',
   'db-prefix' => '',
   'db-url' => '',
   'locale' => 'en',
   'site-mail' => 'admin@example.com',
-  'site-name' => 'Backdrop',
+  'site-name' => 'Silkscreen',
   'root' => '',
 );
 
@@ -170,10 +170,10 @@ define('MAINTENANCE_MODE', 'install');
 
 require_once './core/includes/install.core.inc';
 try {
-  print "Installing Backdrop. This may take a moment...\n";
+  print "Installing Silkscreen. This may take a moment...\n";
   install_backdrop($settings);
   config_set('system.core', 'site_mail', $options['site-mail']);
-  print "Backdrop installed successfully.\n";
+  print "Silkscreen installed successfully.\n";
   exit(0);
 }
 catch (Exception $e) {
