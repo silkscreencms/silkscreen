@@ -7,7 +7,7 @@
 /**
  * The current system version.
  */
-define('BACKDROP_VERSION', '1.10.x-dev');
+define('BACKDROP_VERSION', '1.9.x-dev');
 
 /**
  * Core API compatibility.
@@ -760,6 +760,32 @@ function backdrop_valid_http_host($host) {
  */
 function backdrop_is_https() {
   return isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on';
+}
+
+/**
+ * Checks whether Backdrop is running under Apache.
+ *
+ * @return bool
+ *   TRUE if Backdrop is running under Apache, FALSE if not.
+ *
+ * @since 1.9.2
+ */
+function backdrop_is_apache() {
+  $server_software = $_SERVER['SERVER_SOFTWARE'];
+  return (bool) preg_match("/apache/i", $server_software);
+}
+
+/**
+ * Checks whether Backdrop is running under Nginx.
+ *
+ * @return bool
+ *   TRUE if Backdrop is running under Nginx, FALSE if not.
+ *
+ * @since 1.9.2
+ */
+function backdrop_is_nginx() {
+  $server_software = $_SERVER['SERVER_SOFTWARE'];
+  return (bool) preg_match("/nginx/i", $server_software);
 }
 
 /**
