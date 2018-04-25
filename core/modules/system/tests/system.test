@@ -2537,7 +2537,7 @@ class BackdropRequestSanitizerUnitTestCase extends BackdropUnitTestCase {
         'expected' => array('_GET' => array()),
       ),
       'invalid_destination_get_q' => array(
-        'setup' => array('_GET' => array('destination' => array('q' => array('foo', 'bar')))),
+        'setup' => array('_GET' => array('destination' => 'whatever?q[%23test]=value&foo=bar')),
         'expected' => array('_GET' => array()),
       ),
       'invalid_destination_zero_bytes_get' => array(

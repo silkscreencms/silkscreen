@@ -328,9 +328,12 @@ function file_ajax_upload() {
     backdrop_set_message(t('Invalid upload token.'), 'error');
     $commands = array();
     $commands[] = ajax_command_remove('.file-ajax-messages');
-    $commands[] = ajax_command_prepend(NULL, '<div class="file-ajax-messages">' . $original_path . theme('status_messages') . '</div>');
+    $commands[] = ajax_command_prepend(NULL, '<div class="file-ajax-messages">' . theme('status_messages') . '</div>');
     return array('#type' => 'ajax', '#commands' => $commands);
   }
+
+  // Sanitize form parents before using them.
+  $form_parents = array_filter($form_parents, 'element_child');
 
   if (empty($_POST['form_build_id']) || $form_build_id != $_POST['form_build_id']) {
     // Invalid request.
