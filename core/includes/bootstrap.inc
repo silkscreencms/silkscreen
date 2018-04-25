@@ -3408,14 +3408,8 @@ function _backdrop_bootstrap_sanitize_request() {
       $sanitized_keys = array('External URL in REQUEST: ' . $_REQUEST['destination']);
     }
 
-    // If the path in destination is an array, it must have been set through an
-    // invalid "q" parameter in backdrop_parse_url().
-    $destination_parts = backdrop_parse_url($_GET['destination']);
-    if (is_array($destination_parts['path'])) {
-      $sanitized_keys = array('q');
-    }
-
     // If there is a query string, check its query parameters.
+    $destination_parts = backdrop_parse_url($_GET['destination']);
     if (!empty($destination_parts['query'])) {
       $sanitized_keys = _backdrop_bootstrap_sanitize_input($destination_parts['query'], $whitelist);
     }
