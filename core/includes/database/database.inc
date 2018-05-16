@@ -312,6 +312,13 @@ abstract class DatabaseConnection extends PDO {
    */
   protected $escapedAliases = array();
 
+  /**
+   * List of un-prefixed table names, keyed by prefixed table names.
+   *
+   * @var array
+   */
+  protected $unprefixedTablesMap = array();
+
   function __construct($dsn, $username, $password, $driver_options = array()) {
     // Initialize and prepare the connection prefix.
     $this->setPrefix(isset($this->connectionOptions['prefix']) ? $this->connectionOptions['prefix'] : '');
@@ -340,7 +347,9 @@ abstract class DatabaseConnection extends PDO {
     // Destroy all references to this connection by setting them to NULL.
     // The Statement class attribute only accepts a new value that presents a
     // proper callable, so we reset it to PDOStatement.
-    $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
+    if (!empty($this->statementClass)) {
+      $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
+    }
     $this->schema = NULL;
   }
 
@@ -443,6 +452,13 @@ abstract class DatabaseConnection extends PDO {
     $this->prefixReplace[] = $this->prefixes['default'];
     $this->prefixSearch[] = '}';
     $this->prefixReplace[] = '';
+
+    // Set up a map of prefixed => un-prefixed tables.
+    foreach ($this->prefixes as $table_name => $prefix) {
+      if ($table_name !== 'default') {
+        $this->unprefixedTablesMap[$prefix . $table_name] = $table_name;
+      }
+    }
   }
 
   /**
@@ -476,6 +492,17 @@ abstract class DatabaseConnection extends PDO {
     else {
       return $this->prefixes['default'];
     }
+  }
+
+  /**
+   * Gets a list of individually prefixed table names.
+   *
+   * @return array
+   *   An array of un-prefixed table names, keyed by their fully qualified table
+   *   names (i.e. prefix + table_name).
+   */
+  public function getUnprefixedTablesMap() {
+    return $this->unprefixedTablesMap;
   }
 
   /**
@@ -2919,7 +2946,6 @@ function db_field_exists($table, $field) {
  *
  * @param $table_expression
  *   An SQL expression, for example "simpletest%" (without the quotes).
- *   BEWARE: this is not prefixed, the caller should take care of that.
  *
  * @return
  *   Array, both the keys and the values are the matching tables.
