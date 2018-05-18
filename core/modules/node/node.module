@@ -287,14 +287,16 @@ function node_tag_new($node = NULL, $save_for_later = FALSE) {
 
   global $user;
   if ($user->uid) {
-    db_merge('history')
-      ->key(array(
-        'uid' => $user->uid,
-        'nid' => $nids_viewed,
-      ))
-      ->fields(array('timestamp' => REQUEST_TIME))
-      ->execute();
-   }
+    foreach($nids_viewed as $nid) {
+      db_merge('history')
+        ->key(array(
+          'uid' => $user->uid,
+          'nid' => $nid,
+        ))
+        ->fields(array('timestamp' => REQUEST_TIME))
+        ->execute();
+    }
+  }
 
   // Clear out the saved list so we don't update the same nodes again..
   $nids_viewed = array();
