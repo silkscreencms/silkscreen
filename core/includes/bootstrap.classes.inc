@@ -17,6 +17,7 @@ function backdrop_class_list() {
     'SchemaCache' => $path . 'boostrap.inc',
     'BackdropFakeCache' => $path . 'cache-install.inc',
     'BackdropCacheInterface' => $path . 'cache.inc',
+    'BackdropDateTime' => $path . 'date.class.inc',
     'Color' => $path . 'color.inc',
     'Diff' => $path . 'diff.inc',
     'DiffOp' => $path . 'diff.inc',

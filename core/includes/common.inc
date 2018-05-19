@@ -2988,7 +2988,7 @@ function backdrop_deliver_html_page($page_callback_result) {
         // Print a 503 page.
         backdrop_add_http_header('Status', '503 Service unavailable');
         backdrop_set_title(t('Site under maintenance'));
-        print theme('maintenance_page', array('content' => filter_xss_admin(t(config_get('system.core', 'maintenance_mode_message'), array('@site' => config_get('system.core', 'site_name'))))));
+        print theme('maintenance_page', array('content' => filter_xss_admin(token_replace(t(config_get('system.core', 'maintenance_mode_message'))))));
         break;
     }
   }
@@ -5751,6 +5751,7 @@ function _backdrop_bootstrap_full() {
   }
   $called = TRUE;
   require_once BACKDROP_ROOT . '/' . settings_get('path_inc', 'core/includes/path.inc');
+  require_once BACKDROP_ROOT . '/core/includes/date.inc';
   require_once BACKDROP_ROOT . '/core/includes/theme.inc';
   require_once BACKDROP_ROOT . '/core/includes/pager.inc';
   require_once BACKDROP_ROOT . '/' . settings_get('menu_inc', 'core/includes/menu.inc');
