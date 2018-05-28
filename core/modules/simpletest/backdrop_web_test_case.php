@@ -1594,7 +1594,7 @@ class BackdropWebTestCase extends BackdropTestCase {
       $schema = self::getDatabaseConnection()->schema();
       $prefix = 'simpletest_cache_' . $this->profile . '_';
 
-      $tables = $schema->findTables(db_like($prefix) . '%');
+      $tables = $schema->findTables($prefix . '%');
 
       foreach ($tables as $table_prefix) {
         $table = substr($table_prefix, strlen($prefix));

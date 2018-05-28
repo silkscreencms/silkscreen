@@ -1030,7 +1030,7 @@ function simpletest_script_print_alternatives($string, $array, $degree = 4) {
  * Removes cached profile tables from the database.
  */
 function simpletest_script_clean_profile_cache_tables(){
-  $tables = db_find_tables(Database::getConnection()->prefixTables('{simpletest_cache_}') . '%');
+  $tables = db_find_tables('simpletest_cache_%');
   $count = 0;
   foreach ($tables as $table) {
     db_drop_table($table);
