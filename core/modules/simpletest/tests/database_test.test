@@ -276,6 +276,26 @@ class DatabaseConnectionTestCase extends DatabaseTestCase {
     $connectionOptions = $db->getConnectionOptions();
     $this->assertNotEqual($connection_info['default']['database'], $connectionOptions['database'], 'The test connection info database does not match the current connection options database.');
   }
+
+  function testConnectionUrlParsing() {
+    $parsed = db_parse_url('mysql://myUser:myPass@hostname.tld/myDatabase');
+    $expected = array(
+      'scheme' => 'mysql',
+      'user' => 'myUser',
+      'pass' => 'myPass',
+      'host' => 'hostname.tld',
+      'path' => '/myDatabase',
+    );
+    $this->assertEqual($parsed, $expected, 'The database URL was parsed correctly.');
+
+    $parsed = db_parse_url('mysql:/myUser:myPass@hostname.tld/myDatabase');
+    $expected = FALSE;
+    $this->assertEqual($parsed, $expected, 'A malformed URL returned FALSE.');
+
+    $parsed = db_parse_url('null://myUser:myPass@hostname.tld/myDatabase');
+    $expected = FALSE;
+    $this->assertEqual($parsed, $expected, 'The database URL for a non-existent driver returned FALSE.');
+  }
 }
 
 /**

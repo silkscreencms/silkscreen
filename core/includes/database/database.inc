@@ -832,6 +832,18 @@ abstract class DatabaseConnection extends PDO {
   }
 
   /**
+   * Parse a database URL per the rules of the particular driver.
+   *
+   * @param string $url
+   *   The database URL, e.g., mysql://dbuser:dbpass@localhost/database
+   * @return mixed
+   *   An array with the URL's components, or FALSE on error.
+   */
+  public static function parseDatabaseUrl($url) {
+    return parse_url($url);
+  }
+
+  /**
    * Prepares and returns a SELECT query object.
    *
    * @param $table
@@ -2785,6 +2797,38 @@ function db_like($string) {
 function db_driver() {
   return Database::getConnection()->driver();
 }
+
+/**
+ * Parses the database URL.
+ *
+ * By default, this calls the stock PHP parse_url() function.  Some drivers that
+ * need special processing, such as SQLite, will override
+ * DatabaseConnection::parseDatabaseUrl().  See the database driver
+ * documentation for any special options.
+ *
+ * @param string $url
+ *   The database URL.  E.g., mysql://user:pass@localhost/database
+ * @return mixed
+ *   An array with the URL's components, or FALSE on error.
+ */
+function db_parse_url($url) {
+  // Get the scheme (driver type) from the URL.
+  $matches = array();
+  $preg_result = preg_match("/^(\w*):\/\/.*$/", $url, $matches);
+  $driver = $preg_result ? $matches[1] : NULL;
+  if (!$driver) {
+    return FALSE;
+  }
+  // Load the driver's database.inc file to get the DatabaseConnection class.
+  Database::loadDriverFile($driver, array('database.inc'));
+  $dbc_class = 'DatabaseConnection_' . $driver;
+  if (!class_exists($dbc_class)) {
+    return FALSE;
+  }
+
+  // Parse the URL per the driver's rules.
+  return $dbc_class::parseDatabaseUrl($url);
+ }
 
 /**
  * Closes the active database connection.

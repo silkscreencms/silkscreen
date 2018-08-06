@@ -809,7 +809,8 @@ function backdrop_settings_initialize() {
 
   // Convert simplified database settings into the full databases array.
   if (!empty($database) && $database !== 'mysql://user:pass@localhost/database_name') {
-    $database_parts = parse_url($database);
+    require_once BACKDROP_ROOT . '/core/includes/database/database.inc';
+    $database_parts = db_parse_url($database);
     if (!$database_parts) {
       trigger_error('The database setting could not be parsed. Please check the $database setting in settings.php.', E_USER_ERROR);
     }
