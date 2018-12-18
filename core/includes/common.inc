@@ -3398,8 +3398,8 @@ function backdrop_add_css($data = NULL, $options = NULL) {
  * Returns a themed representation of all stylesheets to attach to the page.
  *
  * It loads the CSS in order, with 'module' first, then 'theme' afterwards.
- * This ensures proper cascading of styles so themes can easily override
- * module styles through CSS selectors.
+ * This ensures proper cascading of styles so themes can override module styles
+ * through CSS selectors.
  *
  * Themes may replace module-defined CSS files by adding a stylesheet with the
  * same filename. For example, themes/bartik/system-menus.css would replace
@@ -3635,7 +3635,7 @@ function backdrop_aggregate_css(&$css_groups) {
  * (http://drupal.org/node/228818) and LINK tags are limited to one file per
  * tag, whereas STYLE tags can contain multiple @import statements allowing
  * multiple files to be loaded per tag. When CSS aggregation is disabled, a
- * Backdrop site can easily have more than 31 CSS files that need to be loaded, so
+ * Backdrop site can have more than 31 CSS files that need to be loaded, so
  * using LINK tags exclusively would result in a site that would display
  * incorrectly in IE. Depending on different needs, different strategies can be
  * employed to decide when to use LINK tags and when to use STYLE tags.
@@ -6453,8 +6453,8 @@ function backdrop_render_page($page) {
  * the element has been rendered, which allows individual elements of a given
  * array to be rendered independently and prevents them from being rendered
  * more than once on subsequent calls to backdrop_render() (e.g., as part of a
- * larger array). If the same array or array element is passed more than once
- * to backdrop_render(), it simply returns an empty string.
+ * larger array). If the same array or element is passed more than once to
+ * backdrop_render(), every use beyond the first will return an empty string.
  *
  * @param array $elements
  *   The structured array describing the data to be rendered.
