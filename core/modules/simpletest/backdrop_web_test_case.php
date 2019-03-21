@@ -3172,7 +3172,7 @@ class BackdropWebTestCase extends BackdropTestCase {
     if (!$message) {
       $message = t('Raw "@raw" found', array('@raw' => $raw));
     }
-    return $this->assert(strpos($this->backdropGetContent(), $raw) !== FALSE, $message, $group);
+    return $this->assert(strpos($this->backdropGetContent(), (string) $raw) !== FALSE, $message, $group);
   }
 
   /**
@@ -3192,7 +3192,7 @@ class BackdropWebTestCase extends BackdropTestCase {
     if (!$message) {
       $message = t('Raw "@raw" not found', array('@raw' => $raw));
     }
-    return $this->assert(strpos($this->backdropGetContent(), $raw) === FALSE, $message, $group);
+    return $this->assert(strpos($this->backdropGetContent(), (string) $raw) === FALSE, $message, $group);
   }
 
   /**
