@@ -1176,7 +1176,7 @@ function views_ui_edit_form($form, &$form_state, $view, $display_id = NULL) {
   // so that configurations work properly, and to try to get the user to save it
   // so that it's not using weird fixed up relationships.
   if (!empty($view->relationships_changed) && empty($_POST)) {
-    backdrop_set_message(t('This view has been automatically updated to fix missing relationships. While this View should continue to work, you should verify that the automatic updates are correct and save this view.'));
+    backdrop_set_message(t('Missing relationships have been fixed automatically. Please verify these changes before saving.'));
     views_ui_cache_set($view);
   }
   return $form;
@@ -4016,6 +4016,20 @@ function views_ui_config_item_form($form, &$form_state) {
       // Get form from the handler.
       $handler->options_form($form['options'], $form_state);
       $form_state['handler'] = &$handler;
+
+      // Allow other modules to alter the formatter settings form.
+      if ($handler instanceof views_handler_field_field) {
+        $context = array(
+          'module' => $handler->field_info['module'],
+          'formatter' => $handler->field_info['type'],
+          'field' => field_info_field($handler->options['field']),
+          'instance' => $handler->instance,
+          'view_mode' => '_custom', // Same view mode as field_view_field().
+          'form' => $form,
+          'form_state' => $form_state,
+        );
+        backdrop_alter('field_formatter_settings_form', $form['options']['settings'], $context);
+      }
     }
 
     $name = NULL;
