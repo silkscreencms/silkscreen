@@ -2,5 +2,6 @@ name = NULL Cache
 description = A dummy cache implementation
 version = BACKDROP_VERSION
 type = driver
+backdrop = 1.x
 
 cache_backend[BackdropNullCache] = cache_null.inc
