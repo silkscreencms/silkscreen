@@ -2,6 +2,7 @@ name = MySQL Database Driver
 description = Enable the use of MySQL, MariaDB and similar databases
 type = driver
 database_driver = mysql
+version = BACKDROP_VERSION
 
 database_backend[DatabaseConnection_mysql] = database.inc
 database_backend[DatabaseTasks_mysql] = install.inc
