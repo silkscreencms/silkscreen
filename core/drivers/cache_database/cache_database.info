@@ -1,4 +1,6 @@
 name = Cache Database
 description = Support cache bins stored in the database
+version = BACKDROP_VERSION
+type = driver
 
 cache_backend[BackdropDatabaseCache] = cache_database.inc

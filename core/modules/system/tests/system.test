@@ -1950,6 +1950,7 @@ class InfoFileCoreTest extends BackdropUnitTestCase {
    */
   function testModuleInfoFileContents() {
     $modules = backdrop_system_listing('/^' . BACKDROP_PHP_FUNCTION_PATTERN . '\.module$/', 'core/modules', 'name', 0);
+    $allowed_project_types = array('module', 'theme', 'layout', 'profile', 'driver');
     $type_fails = array();
     $version_fails = array();
     foreach($modules as $key => $module) {
