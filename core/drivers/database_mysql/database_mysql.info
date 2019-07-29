@@ -1,6 +1,6 @@
 name = MySQL Database Driver
 description = Enable the use of MySQL, MariaDB and similar databases
-
+type = driver
 database_driver = mysql
 
 database_backend[DatabaseConnection_mysql] = database.inc
