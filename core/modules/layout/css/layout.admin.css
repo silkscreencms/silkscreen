@@ -132,6 +132,12 @@
   border-bottom: none;
 }
 
+/* Layout columns */
+.layout-content-form .row > div,
+.layout-content-form .row > main {
+  display: flex;
+}
+
 /* Layout editor. */
 .layout-editor-region {
   width: 100%;
@@ -305,6 +311,28 @@
 
 /* Layout Misc */
 .layout-access-list ul {
+  list-style: none;
   margin: 1em 0;
-  padding: 0 20px;
+  padding: 0;
+}
+.layout-access-list ul li {
+  background: #eee;
+  border-bottom: 1px solid #ccc;
+  padding: 0.1em 0.6em;
+}
+.layout-access-list .layout-condition .layout-operations {
+  display: inline-block;
+}
+.layout-content-form main {
+  /* Override Seven's styling. */
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .layout-access-list .layout-condition .layout-operations {
+    float: right; /* LTR */
+  }
+  [dir="rtl"] .layout-access-list .layout-condition .layout-operations {
+    float: left;
+  }
 }
