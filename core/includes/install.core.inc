@@ -845,7 +845,7 @@ function install_system_module(&$install_state) {
   require_once BACKDROP_ROOT . '/core/includes/bootstrap.inc';
   $connection = Database::getConnection();
   if ($connection->utf8mb4IsActive()) {
-    state_set('backdrop_utf8mb4_tables', TRUE);
+    state_set('database_utf8mb4_active', TRUE);
   }
 }
 
