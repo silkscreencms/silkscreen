@@ -184,7 +184,7 @@ function installer_theme($existing, $type, $theme, $path) {
     ) + $base,
     // Template for single project.
     'installer_browser_project' => array(
-      'variables' => array('project' => NULL, 'first' => NULL),
+      'variables' => array('project' => NULL, 'first' => NULL, 'repository' => NULL),
       'template' => 'templates/installer-project',
     ) + $base,
     // Template for project description.

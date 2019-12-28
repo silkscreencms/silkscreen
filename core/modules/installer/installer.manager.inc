@@ -681,19 +681,19 @@ function installer_manager_install_form_validate($form, &$form_state) {
     $not_found = array();
     module_load_include('inc', 'installer', 'installer.browser');
 
-    $modules = installer_browser_fetch_results(array('items_per_page' => 999, 'type' => 'module'));
+    $modules = installer_browser_fetch_results(array('type' => 'module'));
     $all_projects = $modules['projects'];
     if (!empty($modules)) {
       $listed_projects = array_keys($modules['projects']);
       $not_found = array_diff($project_names, $listed_projects);
       if ($not_found) {
-        $themes = installer_browser_fetch_results(array('items_per_page' => 999, 'type' => 'theme'));
+        $themes = installer_browser_fetch_results(array('type' => 'theme'));
         if (!empty($themes)) {
           $all_projects = array_merge($all_projects, $themes['projects']);
           $listed_projects = array_keys($themes['projects']);
           $not_found = array_diff($not_found, $listed_projects);
           if ($not_found) {
-            $layouts = installer_browser_fetch_results(array('items_per_page' => 999, 'type' => 'layout'));
+            $layouts = installer_browser_fetch_results(array('type' => 'layout'));
             if (!empty($layouts)) {
               $all_projects = array_merge($all_projects, $layouts['projects']);
               $listed_projects = array_keys($layouts['projects']);

@@ -20,7 +20,7 @@ function installer_browser_page($type) {
   // select to view available releases. Install blocked on select versions page.
   installer_browser_check_zip_loaded();
 
-  // Show link to enable page if recently installed modules were not yet 
+  // Show link to enable page if recently installed modules were not yet
   // enabled.
   $recent_projects = installer_browser_get_installed_projects();
   foreach ($recent_projects as $project) {
@@ -72,9 +72,6 @@ function installer_browser_page($type) {
     $filters['sort'] = $_SESSION['installer_browser_sort_filter_' . $type];
   }
 
-  $filters['items_per_page'] = 20;
-  $filters['page'] = isset($_GET['page']) ? $_GET['page'] : 0;
-
   // Get the projects to display here based on the filters.
   $results = installer_browser_fetch_results($filters);
 
@@ -87,11 +84,6 @@ function installer_browser_page($type) {
   // Save the listed projects in the session so it can be used.
   $_SESSION['installer_browser_listed_projects'] = $results['projects'];
 
-  $list = array();
-  foreach ($results['projects'] as $project) {
-    $list[] = $project;
-  }
-
   // Add the pager.
   $total = $results['total'];
   $items_per_page = 20;
@@ -102,6 +94,8 @@ function installer_browser_page($type) {
   if ($finish > $total) {
     $finish = $total;
   }
+
+  $list = array_slice($results['projects'], $offset, $items_per_page);
 
   $filter_form = backdrop_get_form('installer_browser_filters_form', $type);
   $sort_options = installer_browser_get_sort_options();
@@ -592,7 +586,7 @@ function installer_browser_installation_theme_form($form, &$form_state, $project
       '#submit' => array('installer_browser_installation_theme_finish'),
     );
   }
-  
+
   return $form;
 }
 
@@ -997,7 +991,7 @@ function installer_browser_install_queue_callback($method, $op, $project_name) {
       break;
 
     default:
-      return MENU_NOT_FOUND;    
+      return MENU_NOT_FOUND;
   }
 
   if ($method === 'ajax') {

@@ -97,6 +97,22 @@
   text-align: left;
 }
 
+.project-footer {
+  padding-top: 0.2em;
+}
+.project-repository,
+.project-repository-name,
+.project-repository-logo {
+  float: left;
+}
+.project-repository-logo img {
+  max-height: 2em;
+  padding-right: 0.5em;
+}
+.project-repository-name {
+  display: none;
+}
+
 .project-author {
   color: gray;
   font-size: 0.9em;
@@ -134,6 +150,9 @@
   height: auto;
 }
 @media (min-width: 500px) {
+  .project-repository-name {
+    display: inherit;
+  }
   .screenshot {
     float: left; /* LTR */
     width: 133px;
@@ -143,9 +162,11 @@
   [dir="rtl"] .screenshot {
     float: right;
   }
+  .has-image .project-footer,
   .has-image .project-information {
     margin-left: 148px; /* LTR */
   }
+  [dir="rtl"] .has-image .project-footer,
   [dir="rtl"] .has-image .project-information {
     margin-right: 148px;
     margin-left: 0;

@@ -1,8 +1,18 @@
 {
     "_config_name": "installer.settings",
-    "installer_server": {
+    "installer_server": [
+      {
+        "url": "https://projects.silkscreencms.org",
+        "name": "Silkscreen",
+        "site_name": "SilkscreenCMS.org",
+        "logo": "core/modules/installer/images/silkscreen.png"
+      },
+      {
         "url": "https://projects.backdropcms.org",
-        "name": "Backdrop"
-    },
+        "name": "Backdrop",
+        "site_name": "BackdropCMS.org",
+        "logo": "core/modules/installer/images/backdrop.png"
+      },
+    ],
     "core_update": true
 }

@@ -12,3 +12,25 @@ function installer_update_1000() {
   $config->set('core_update', FALSE);
   $config->save();
 }
+
+/**
+ * Add Silkscreen Project repository
+ */
+function installer_update_1001() {
+  $config = config('installer.settings');
+  $server = $config->get('installer_server');
+  $servers['silkscreen'] = array(
+    'url' => 'https://projects.silkscreencms.org/',
+    'name' => 'Silkscreen',
+    'site_name' => 'SilkscreenCMS.org',
+    'logo' => 'core/modules/installer/images/silkscreen.png',
+  );
+  $servers['backdrop'] = array(
+    'url' => 'https://projects.backdropcms.org',
+    'name' => 'Backdrop',
+    'site_name' => 'BackdropCMS.org',
+    'logo' => 'core/modules/installer/images/backdrop.png',
+  );
+  $config->set('installer_server', $servers);
+  $config->save();
+}

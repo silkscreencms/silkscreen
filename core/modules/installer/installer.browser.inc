@@ -235,9 +235,9 @@ function installer_browser_get_queued_releases() {
  *   Returns an array of results.
  */
 function installer_browser_fetch_results($filters) {
-  $server = installer_browser_get_server();
+  $servers = installer_browser_get_server_list();
   // Attempt to retrieve the cached version of this page.
-  $cid = 'installer:results:' . md5(serialize(array_merge($filters, $server)));
+  $cid = 'installer:results:' . md5(serialize(array_merge($filters, $servers)));
   if ($cache = cache_get($cid)) {
     return $cache->data;
   }
@@ -245,22 +245,57 @@ function installer_browser_fetch_results($filters) {
   $local_filters = $filters;
   $local_filters['method'] = 'query';
 
-  $query_url = $server['url'] . '/query/' . $local_filters['type'] . '/1?' . http_build_query($local_filters, FALSE, '&');
-  $response = backdrop_http_request($query_url);
-
-  if ($response->code == '200') {
-    $results = backdrop_json_decode($response->data);
+  $results = array('projects' => array());
+  foreach ($servers as $repo_name => $server) {
+    $count_results = _installer_browser_execute_query($server, $local_filters, 0);
+    if ($count_results === NULL) {
+      continue;
+    }
+    $package_results = _installer_browser_execute_query($server, $local_filters, $count_results['total']);
+    if ($package_results === NULL) {
+      continue;
+    }
+    // Set the source for each package.
+    foreach (array_keys($package_results['projects']) as $package) {
+      $package_results['projects'][$package]['source'] = $repo_name;
+    }
+    $results['projects'] += $package_results['projects'];
   }
-  else {
-    backdrop_set_message(t("Encountered an error when trying to fetch results from @name. Error @code : @message",
-      array('@name' => $server['name'], '@code' => $response->code, '@message' => $response->error)));
-    return array();
-  }
+  $results['total'] = count($results['projects']);
 
   // Set the cached version of the results.
   cache_set($cid, $results, 'cache', strtotime("+24 hours"));
 
   return $results;
+}
+
+/**
+ * Helper function to execute queries for projects.  Connects once to get
+ * the total count of projects, and then a second time to get all the
+ * projects in a repository.
+ *
+ * @param  array $server
+ *   An array describing the server.
+ * @param  array $filters
+ *   An array of filters for the query.
+ * @param  int $ipp
+ *   The number of items to retrieve.
+ * @return
+ *   An array of projects on the server or NULL on error.
+ */
+function _installer_browser_execute_query($server, $filters, $ipp) {
+  $filters = array_merge($filters, array('items_per_page' => $ipp));
+  $query_url = $server['url'] . '/query/' . $filters['type'] . '/1?' . http_build_query($filters, FALSE, '&');
+  $response = backdrop_http_request($query_url);
+
+  if ($response->code == '200') {
+    return backdrop_json_decode($response->data);
+  }
+  else {
+    backdrop_set_message(t("Encountered an error when trying to fetch results from @name. Error @code : @message",
+      array('@name' => $server['name'], '@code' => $response->code, '@message' => $response->error)));
+    return NULL;
+  }
 }
 
 /**
@@ -272,19 +307,61 @@ function installer_browser_fetch_results($filters) {
  *   Returns an array representing the active server with the following keys:
  *     - url: The absolute url to the server without query parameters.
  *     - name: A human-readable name for this server.
+ *     - site_name: The domain name for the "See on @site" link.
+ *     - logo: An image logo for the repository.
  *   For example:
  *   @code
  *    array(
  *      "url" => "https://projects.backdropcms.org",
  *      "name" => "Backdrop",
+ *      "site_name" => "BackdropCMS.org",
+ *      "logo" => "core/modules/installer/images/backdrop.png",
  *    )
  *   @endcode
+ *
+ * @deprecated since 1.15
  */
 function installer_browser_get_server() {
-  $server = config_get('installer.settings', 'installer_server');
+  watchdog_deprecated_function('installer', __FUNCTION__);
+
+  $server_list = installer_browser_get_server_list();
+  $server = reset($server_list);
   backdrop_alter('installer_server', $server);
 
   return $server;
+}
+
+/**
+ * Gets the list of servers to use for fetching results.
+ *
+ * The installer_browser_fetch_results($filters) call returns an array with the
+ * following keys:
+ * @return
+ *   Returns an array representing the active server with the following keys:
+ *     - url: The absolute url to the server without query parameters.
+ *     - name: A human-readable name for this server.
+ *     - site_name: The domain name for the "See on @site" link.
+ *     - logo: An image logo for the repository.
+ *   For example:
+ *   @code
+ *    array(
+ *      "url" => "https://projects.backdropcms.org",
+ *      "name" => "Backdrop",
+ *      "site_name" => "BackdropCMS.org",
+ *      "logo" => "core/modules/installer/images/backdrop.png",
+ *    )
+ *   @endcode
+ */
+function installer_browser_get_server_list() {
+  $server_list = config_get('installer.settings', 'installer_server');
+  backdrop_alter('installer_server_list', $server_list);
+
+  // Compatibility: Wrap a single server instance in an array.
+  if (array_key_exists('url', $server_list)) {
+    $server_list = array($server_list);
+  }
+
+  return $server_list;
 }
 
 /**
@@ -512,7 +589,7 @@ function installer_browser_add_remove_queue_link($project_name, $title = NULL, $
         ),
       ),
     );
-    
+
   }
 
   return backdrop_render($build);

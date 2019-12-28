@@ -9,6 +9,8 @@
  * - $title: The title of the project.
  * - $last_updated: A string representing when the project was last updated.
  * - $description: The project description. This could be long.
+ * - $repository_logo: The logo for the repository.
+ * - $repository: The name of the source repository.
  * - $extras: A string of any extra info that should go at the bottom.
  * - $status: Whether the project is already installed, enabled, or not.
  * - $install: The add to install queue button/link.
@@ -39,13 +41,24 @@ if ($image) {
     </div>
   </div>
 
-  <div class="project-extras">
-    <div class="project-extra">
-      <?php print $extras; ?>
+  <div class="project-footer">
+    <div class="project-repository">
+      <div class="project-repository-logo">
+        <?php print $repository_logo; ?>
+      </div>
+      <div class="project-repository-name">
+        <?php print $repository_name; ?>
+      </div>
     </div>
-    <div class="project-status">
-        <?php print $status; ?>
-        <?php print $install; ?>
+
+    <div class="project-extras">
+      <div class="project-extra">
+        <?php print $extras; ?>
+      </div>
+      <div class="project-status">
+          <?php print $status; ?>
+          <?php print $install; ?>
+      </div>
     </div>
   </div>
 </div>

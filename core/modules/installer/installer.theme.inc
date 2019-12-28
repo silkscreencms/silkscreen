@@ -85,9 +85,10 @@ function template_preprocess_installer_browser_list(&$variables) {
       $title,
     );
     // Theme each individual project and add to the list.
+    $repository_list = installer_browser_get_server_list();
     foreach ($variables['projects_list'] as $project) {
       $row = array();
-      $row[] = theme('installer_browser_project', array('project' => $project, 'first' => NULL));
+      $row[] = theme('installer_browser_project', array('project' => $project, 'first' => NULL, 'repository' => $repository_list[$project['source']]));
       $rows[] = $row;
     }
     $content .= theme('table', array('header' => $headers, 'rows' => $rows));
@@ -124,7 +125,9 @@ function template_preprocess_installer_browser_list(&$variables) {
 function template_preprocess_installer_browser_project_dialog(&$variables) {
   template_preprocess_installer_browser_project($variables);
   $project = $variables['project'];
-  $variables['project_page'] = l(t('View on BackdropCMS.org'), 'https://backdropcms.org/project/' . $project['name']);
+  $all_repos = installer_browser_get_server_list();
+  $repo = $all_repos[$project['source']];
+  $variables['project_page'] = l(t('View on @site', array('@site' => $repo['name'])), $project['project url']);
   $variables['description'] = _filter_htmlcorrector(filter_xss($project['description'], array('h2', 'p', 'a', 'ul', 'li', 'pre')));
   $variables['title'] = $project['title'];
   $variables['image'] = FALSE;
@@ -183,6 +186,12 @@ function template_preprocess_installer_browser_project(&$variables) {
     array('attributes' => $dialog_attributes));
   $variables['description'] = theme('installer_browser_project_description', array('project' => $project));
   $variables['last_updated'] = ($project['last updated']) ? t('Last Updated: @date', array('@date' => format_date($project['last updated'], 'long'))) : '';
+
+  $repo = $variables['repository'];
+  if ($repo) {
+    $variables['repository_name'] = $repo['name'];
+    $variables['repository_logo'] = theme('image', array('path' => $repo['logo'], 'alt' => t('@name logo', array('@name' => $repo['name']))));
+  }
 
   $extras = array();
 
