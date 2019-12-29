@@ -8,7 +8,7 @@
  * Checks if a project is enabled.
  *
  * @param string $type
- *   The type of project. Could be 'theme' or 'module' or 'layout'.
+ *   The type of project. Could be 'theme', 'module', 'layout' or 'driver'.
  * @param string $name
  *   The short name of the project.
  *
@@ -27,6 +27,10 @@ function _installer_browser_is_project_enabled($type, $name) {
     case 'layout':
       $excluded_templates = config_get('layout.settings', 'excluded_templates');
       return layout_get_layout_template_info($name) && !in_array($name, $excluded_templates);
+      break;
+    case 'driver':
+      $drivers = silkscreen_driver_list();
+      return in_array($name, array_keys($drivers));
       break;
   }
   return FALSE;
@@ -292,8 +296,8 @@ function _installer_browser_execute_query($server, $filters, $ipp) {
     return backdrop_json_decode($response->data);
   }
   else {
-    backdrop_set_message(t("Encountered an error when trying to fetch results from @name. Error @code : @message",
-      array('@name' => $server['name'], '@code' => $response->code, '@message' => $response->error)));
+    watchdog('installer', t("Encountered an error when trying to fetch results from @name. Error @code : @message",
+      array('@name' => $server['name'], '@code' => $response->code, '@message' => $response->error)), WATCHDOG_WARNING);
     return NULL;
   }
 }
@@ -489,6 +493,7 @@ function installer_browser_get_destination_after_install() {
   $layout = in_array('layout', $types);
   $theme = in_array('theme', $types);
   $module = in_array('module', $types);
+  $driver = in_array('driver', $types);
 
   $layout_message = t('Installation finished successfully. All newly-added layout templates have been enabled and are available for use in your layouts. You can manage layout templates on the layouts !link page.', array('!link' => l(t('Settings'), 'admin/structure/layouts/settings')));
 

@@ -20,7 +20,7 @@ function installer_update_1001() {
   $config = config('installer.settings');
   $server = $config->get('installer_server');
   $servers['silkscreen'] = array(
-    'url' => 'https://projects.silkscreencms.org/',
+    'url' => 'https://projects.silkscreencms.org',
     'name' => 'Silkscreen',
     'site_name' => 'SilkscreenCMS.org',
     'logo' => 'core/modules/installer/images/silkscreen.png',

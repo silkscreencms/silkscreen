@@ -28,6 +28,7 @@ function installer_menu() {
     'module' => 'admin/modules',
     'theme' => 'admin/appearance',
     'layout' => 'admin/structure/layouts',
+    'driver' => 'admin/config/drivers',
   );
   foreach ($paths as $context => $path) {
     $items[$path . '/install'] = array(
@@ -57,6 +58,9 @@ function installer_menu() {
 
   $items['admin/structure/layouts/install'] += array('title' => 'Install new layouts');
   $items['admin/structure/layouts/update'] += array('title' => 'Update layouts');
+
+  $items['admin/config/drivers/install'] += array('title' => 'Install new drivers');
+  $items['admin/config/drivers/update'] += array('title' => 'Update drivers');
 
   $items['admin/installer/manual'] = array(
     'page callback' => 'backdrop_get_form',

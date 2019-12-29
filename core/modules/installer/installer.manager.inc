@@ -69,6 +69,9 @@ function installer_manager_update_form($form, $form_state, $context) {
     case 'layout':
       backdrop_set_title('Update layouts');
       break;
+    case 'driver':
+      backdrop_set_title('Update drivers');
+      break;
     case 'report':
       backdrop_set_title('Update projects');
       break;
@@ -211,6 +214,7 @@ function installer_manager_update_form($form, $form_state, $context) {
       case 'module':
       case 'theme':
       case 'layout':
+      case 'driver':
         $projects['enabled'][$name] = $entry;
         break;
 
