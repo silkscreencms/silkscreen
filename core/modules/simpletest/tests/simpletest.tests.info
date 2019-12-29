@@ -640,6 +640,12 @@ description = Tests management of database connections.
 group = Database
 file = database_test.test
 
+[DriverAPITestCase]
+name = Driver API tests
+description = Tests the driver APIs.
+group = Drivers
+file = driver.test
+
 [BackdropErrorHandlerUnitTest]
 name = Backdrop error handlers
 description = Performs tests on the Backdrop error and exception handler.

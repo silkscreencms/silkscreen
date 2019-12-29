@@ -1832,7 +1832,7 @@ abstract class Database {
       throw new DatabaseDriverNotSpecifiedException('Driver not specified for this database connection: ' . $key);
     }
 
-    $backends = backdrop_find_backends('database');
+    $backends = silkscreen_find_backends('database');
     $driver_class = 'DatabaseConnection_' . $driver;
     if (array_key_exists($driver_class, $backends)) {
       require_once $backends[$driver_class];
@@ -1913,7 +1913,7 @@ abstract class Database {
    *   The name of the files the driver specific class can be.
    */
   public static function loadDriverFile($driver, array $files = array()) {
-    $backends = backdrop_find_backends('database');
+    $backends = silkscreen_find_backends('database');
 
     // Load the base classes first
     foreach ($files as $file) {

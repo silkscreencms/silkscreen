@@ -1499,35 +1499,65 @@ function backdrop_load($type, $name) {
 }
 
 /**
- * Scan the drivers directories for driver modules and load the class files
- * for the type of backend requested.  The supported types are 'config',
- * 'cache', and 'database'.
+ * Returns a list of objects decribing the installed drivers indexed by
+ * their machine names.  Each of the driver objects includes the path
+ * to their info file, their machine name, and the contents of their
+ * info files.
  *
- * @param  string $backend_type The type of backend to load.
+ * @return array
+ *   A list of objects describing the installed drivers.
  */
-function backdrop_find_backends($backend_type) {
+function silkscreen_driver_list() {
   static $info_files = array();
-  static $driver_classes = array();
 
-  if (!array_key_exists($backend_type, $driver_classes)) {
+  if (empty($info_files)) {
     $config = conf_path();
-    $driver_classes[$backend_type] = array();
-
     $searchdir = array(
       'core/drivers',
       'drivers',
       $config . '/drivers',
     );
-
-    if (empty($info_files)) {
-      $info_files = backdrop_scan_directories("/\.info$/", $searchdir);
-    }
+    $info_files = backdrop_scan_directories("/\.info$/", $searchdir);
 
     foreach ($info_files as $driver_name => $driver_info) {
-      $info = backdrop_parse_info_file(BACKDROP_ROOT . '/' . $driver_info->uri);
+      $info_files[$driver_name]->info = backdrop_parse_info_file(BACKDROP_ROOT . '/' . $driver_info->uri);
+    }
+  }
+
+  return $info_files;
+}
+
+/**
+ * This is a wrapper for silkscreen_find_backends(), in case someone
+ * happened to call it.
+ *
+ * @param  string $backend_type
+ *   The type of backend to load.
+ */
+function backdrop_find_backends($backend_type) {
+  return silkscreen_find_backends($backend_type);
+}
+
+/**
+ * Scan the drivers directories for driver modules and load the class files
+ * for the type of backend requested.  The supported types are 'config',
+ * 'cache', and 'database'.
+ *
+ * @param  string $backend_type The type of backend to load.
+ * @return
+ *   List of driver classes
+ */
+function silkscreen_find_backends($backend_type) {
+  static $driver_classes = array();
+
+  if (!array_key_exists($backend_type, $driver_classes)) {
+    $driver_classes[$backend_type] = array();
+
+    $info_files = silkscreen_driver_list();
+    foreach ($info_files as $driver_name => $driver_info) {
       $module_path = dirname($driver_info->uri);
-      if (array_key_exists($backend_type . '_backend', $info)) {
-        foreach ($info[$backend_type . '_backend'] as $class => $filename) {
+      if (array_key_exists($backend_type . '_backend', $driver_info->info)) {
+        foreach ($driver_info->info[$backend_type . '_backend'] as $class => $filename) {
           $driver_classes[$backend_type][$class] = BACKDROP_ROOT . '/' . $module_path . '/' . $filename;
         }
       }
@@ -1548,7 +1578,7 @@ function backdrop_find_backends($backend_type) {
  * @param  string $backend_type The backend type
  */
 function backdrop_load_backends($backend_type) {
-  $classes = backdrop_find_backends($backend_type);
+  $classes = silkscreen_find_backends($backend_type);
   foreach ($classes as $class => $path) {
     include_once $path;
   }
@@ -4227,9 +4257,9 @@ function backdrop_autoload($class) {
       }
     }
     // Load class registries for the backends.
-    $class_registry +=  backdrop_find_backends('database');
-    $class_registry += backdrop_find_backends('cache');
-    $class_registry += backdrop_find_backends('config');
+    $class_registry += silkscreen_find_backends('database');
+    $class_registry += silkscreen_find_backends('cache');
+    $class_registry += silkscreen_find_backends('config');
     backdrop_alter('autoload_info', $class_registry);
   }
 

@@ -311,7 +311,7 @@ function config_get_config_storage_handlers() {
 
   // First time through, register the handlers
   if (empty($handlers)) {
-    $backends = backdrop_find_backends('config');
+    $backends = silkscreen_find_backends('config');
     foreach ($backends as $class => $file) {
       require_once $file;
       $prefix = $class::urlPrefix();

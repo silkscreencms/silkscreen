@@ -1,0 +1,21 @@
+<?php
+
+class DriverAPITestCase extends BackdropWebTestCase {
+
+  function testDriverList() {
+    $driver_list = silkscreen_driver_list();
+
+    $this->assertTrue(array_key_exists('database_mysql', $driver_list), 'MySQL driver is present.');
+    $mysql_driver = $driver_list['database_mysql'];
+    $this->assertTrue(($mysql_driver->name == 'database_mysql') && array_key_exists('database_backend', $mysql_driver->info), 'MySQL driver is a database driver.');
+
+    $this->assertTrue(array_key_exists('config_database', $driver_list), 'Database configuration driver is present.');
+    $config_db_driver = $driver_list['config_database'];
+    $this->assertTrue(($config_db_driver->name == 'config_database') && array_key_exists('config_backend', $config_db_driver->info), 'Database configuration driver is a config storage driver.');
+
+    $this->assertTrue(array_key_exists('cache_null', $driver_list), 'NULL Cache driver is present.');
+    $cache_null_driver = $driver_list['cache_null'];
+    $this->assertTrue(($cache_null_driver->name == 'cache_null') && array_key_exists('cache_backend', $cache_null_driver->info), 'NULL Cache driver is a cache driver.');
+  }
+
+}
