@@ -12,7 +12,7 @@
         "name": "Backdrop",
         "site_name": "BackdropCMS.org",
         "logo": "core/modules/installer/images/backdrop.png"
-      },
+      }
     ],
     "core_update": true
 }
