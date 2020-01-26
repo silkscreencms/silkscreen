@@ -598,7 +598,6 @@ function date_timezone_abbr($refresh = FALSE) {
   return $data;
 }
 
-
 /**
  * Formats a date, using a date type or a custom date format string.
  *
