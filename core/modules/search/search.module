@@ -1193,7 +1193,7 @@ function search_excerpt($keys, $text) {
       }
       else {
         $info = search_simplify_excerpt_match($key, $text, $included[$key], $boundary);
-        if ($info['where']) {
+        if (!empty($info) && $info['where']) {
           $p = $info['where'];
           if ($info['keyword']) {
             $foundkeys[] = $info['keyword'];
@@ -1381,6 +1381,7 @@ function search_forms() {
 function search_autoload_info() {
   return array(
     'SearchQuery' => 'search.extender.inc',
+    'viewsSearchQuery' => 'search.extender.inc',
 
     // Views handlers.
     'views_handler_argument_search' => 'views/views_handler_argument_search.inc',
