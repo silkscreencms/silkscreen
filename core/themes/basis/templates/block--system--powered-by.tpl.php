@@ -15,7 +15,7 @@
 <div class="<?php print implode(' ', $classes); ?>">
 
 <?php // Adds drop lounging in the footer ?>
-<div class="drop-lounging"></div>
+<div class="silkscreen-logo"></div>
 
 <?php print render($title_prefix); ?>
 <?php if ($title): ?>

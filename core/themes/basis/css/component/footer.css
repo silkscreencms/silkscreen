@@ -61,6 +61,12 @@
   width: 7em;
 }
 
+.silkscreen-logo {
+  position: relative;
+  width: 12em;
+}
+
+.silkscreen-logo:before,
 .drop-lounging:before {
   content: '';
   position: absolute;
@@ -73,12 +79,23 @@
   height: 0;
   margin: 0;
   padding: 0 0 52%;
+}
+
+.drop-lounging:before {
+  background: url("../../images/drop-lounging.png") no-repeat;
   -webkit-transform: translate(-50%, -82%);
   transform: translate(-50%, -82%);
-  background: url("../../images/drop-lounging.png") no-repeat;
   background-size: 100% auto;
 }
 
+.silkscreen-logo:before {
+  background: url("../../images/silkscreen-sb.png") no-repeat;
+  -webkit-transform: translate(-60%, -50%);
+  transform: translate(-60%, -50%);
+  background-size: 100% auto;
+}
+
+.l-footer .block:first-child .silkscreen-logo:before,
 .l-footer .block:first-child .drop-lounging:before {
   display: block;
 }
