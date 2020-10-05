@@ -63,7 +63,7 @@ function config($config_file, $type = 'active') {
  * @param string $option
  *   The name of the config option within the file to delete. The config option
  *   may contain periods to indicate levels within the config file.
- * 
+ *
  * @see config_set()
  * @see config_get()
  *
