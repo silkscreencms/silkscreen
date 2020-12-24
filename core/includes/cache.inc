@@ -20,7 +20,7 @@
  *
  * @see BackdropCacheInterface
  */
-function cache($bin = 'cache') {
+function cache(string $bin = 'cache') {
   // Temporary backwards compatibiltiy layer, allow old style prefixed cache
   // bin names to be passed as arguments.
   $bin = str_replace('cache_', '', $bin);
@@ -55,18 +55,18 @@ function cache($bin = 'cache') {
  * @return
  *   The cache or FALSE on failure.
  */
-function cache_get($cid, $bin = 'cache') {
+function cache_get(string $cid, string $bin = 'cache') {
   return cache($bin)->get($cid);
 }
 
 /**
  * Returns data from the persistent cache when given an array of cache IDs.
  *
- * @param $cids
+ * @param array $cids
  *   An array of cache IDs for the data to retrieve. This is passed by
  *   reference, and will have the IDs successfully returned from cache
  *   removed.
- * @param $bin
+ * @param string $bin
  *   The cache bin from which data should be retrieved. Valid core values are
  *   "cache", "bootstrap", "field", "filter", "form", "menu", "page", "path",
  *   "update", "views", and "views_data". Bin names may include the prefix of
@@ -75,7 +75,7 @@ function cache_get($cid, $bin = 'cache') {
  * @return
  *   An array of the items successfully returned from cache indexed by cid.
  */
-function cache_get_multiple(array &$cids, $bin = 'cache') {
+function cache_get_multiple(array &$cids, string $bin = 'cache') {
   return cache($bin)->getMultiple($cids);
 }
 
@@ -127,7 +127,7 @@ function cache_get_multiple(array &$cids, $bin = 'cache') {
  *
  * @see cache_get()
  */
-function cache_set($cid, $data, $bin = 'cache', $expire = CACHE_PERMANENT) {
+function cache_set(string $cid, $data, string $bin = 'cache', int $expire = CACHE_PERMANENT) {
   return cache($bin)->set($cid, $data, $expire);
 }
 
@@ -137,7 +137,7 @@ function cache_set($cid, $data, $bin = 'cache', $expire = CACHE_PERMANENT) {
  * @param string $bin
  *   The bin whose data should be emptied.
  */
-function cache_flush($bin) {
+function cache_flush(string $bin) {
   return cache($bin)->flush();
 }
 
@@ -148,10 +148,10 @@ function cache_flush($bin) {
  * expirable entries will be cleared from the page and layout bins, and the
  * $wildcard argument is ignored.
  *
- * @param string $cid
+ * @param string|array|NULL $cid
  *   The cache ID or an array of cache IDs. Otherwise, all cache entries that
  *   can expire are deleted.
- * @param string $bin
+ * @param string|NULL $bin
  *   The cache bin whose data should be cleared. Mandatory argument if $cid is
  *   set.
  * @param bool $wildcard
@@ -166,7 +166,7 @@ function cache_flush($bin) {
  *
  * @see cache_flush()
  */
-function cache_clear_all($cid = NULL, $bin = NULL, $wildcard = FALSE) {
+function cache_clear_all($cid = NULL, string $bin = NULL, bool $wildcard = FALSE) {
   // Default value cache flush.
   if (!isset($cid) && !isset($bin)) {
     if (module_exists('layout')) {
@@ -181,7 +181,7 @@ function cache_clear_all($cid = NULL, $bin = NULL, $wildcard = FALSE) {
       cache($bin)->garbageCollection();
     }
     else {
-      cache($bin)->delete($cid);
+      is_array($cid) ? cache($bin)->deleteMultiple($cid) : cache($bin)->delete($cid);
     }
   }
   else {
@@ -206,7 +206,7 @@ function cache_clear_all($cid = NULL, $bin = NULL, $wildcard = FALSE) {
  * @return
  *   TRUE if the cache bin specified is empty.
  */
-function cache_is_empty($bin) {
+function cache_is_empty(string $bin) {
   return cache($bin)->isEmpty();
 }
 
@@ -261,7 +261,7 @@ interface BackdropCacheInterface {
    * @return
    *   The cache or FALSE on failure.
    */
-  function get($cid);
+  function get(string $cid);
 
   /**
    * Returns data from the persistent cache when given an array of cache IDs.
@@ -301,7 +301,7 @@ interface BackdropCacheInterface {
    *   - A Unix timestamp: Indicates that the item should be kept at least until
    *     the given time, after which it behaves like CACHE_TEMPORARY.
    */
-  function set($cid, $data, $expire = CACHE_PERMANENT);
+  function set(string $cid, $data, int $expire = CACHE_PERMANENT);
 
   /**
    * Deletes an item from the cache.
@@ -309,15 +309,15 @@ interface BackdropCacheInterface {
    * @param string $cid
    *    The cache ID to delete.
    */
-  function delete($cid);
+  function delete(string $cid);
 
   /**
    * Deletes multiple items from the cache.
    *
-   * @param $cids
+   * @param array $cids
    *   An array of $cids to delete.
    */
-  function deleteMultiple(Array $cids);
+  function deleteMultiple(array $cids);
 
   /**
    * Deletes items from the cache using a wildcard prefix.
@@ -325,7 +325,7 @@ interface BackdropCacheInterface {
    * @param string $prefix
    *   A wildcard prefix.
    */
-  function deletePrefix($prefix);
+  function deletePrefix(string $prefix);
 
   /**
    * Flushes all cache items in a bin.

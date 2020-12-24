@@ -19,12 +19,12 @@ class BackdropNullCache implements BackdropCacheInterface {
    * @param $bin
    *   The cache bin for which the object is created.
    */
-  function __construct($bin) {}
+  function __construct(string $bin) {}
 
   /**
    * Implements BackdropCacheInterface::get().
    */
-  function get($cid) {
+  function get(string $cid) {
     return FALSE;
   }
 
@@ -38,12 +38,12 @@ class BackdropNullCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::set().
    */
-  function set($cid, $data, $expire = CACHE_PERMANENT) {}
+  function set(string $cid, $data, int $expire = CACHE_PERMANENT) {}
 
   /**
    * Implements BackdropCacheInterface::delete().
    */
-  function delete($cid) {}
+  function delete(string $cid) {}
 
   /**
    * Implements BackdropCacheInterface::deleteMultiple().
@@ -53,7 +53,7 @@ class BackdropNullCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::deletePrefix().
    */
-  function deletePrefix($prefix) {}
+  function deletePrefix(string $prefix) {}
 
   /**
    * Implements BackdropCacheInterface::flush().

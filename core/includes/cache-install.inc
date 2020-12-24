@@ -18,7 +18,7 @@ class BackdropFakeCache extends BackdropDatabaseCache implements BackdropCacheIn
   /**
    * Overrides BackdropDatabaseCache::get().
    */
-  function get($cid) {
+  function get(string $cid) {
     return FALSE;
   }
 
@@ -32,13 +32,13 @@ class BackdropFakeCache extends BackdropDatabaseCache implements BackdropCacheIn
   /**
    * Overrides BackdropDatabaseCache::set().
    */
-  function set($cid, $data, $expire = CACHE_PERMANENT) {
+  function set(string $cid, $data, int $expire = CACHE_PERMANENT) {
   }
 
   /**
    * Overrides BackdropDatabaseCache::delete().
    */
-  function delete($cid) {
+  function delete(string $cid) {
     try {
       if (class_exists('Database')) {
         parent::delete($cid);
@@ -64,7 +64,7 @@ class BackdropFakeCache extends BackdropDatabaseCache implements BackdropCacheIn
   /**
    * Overrides BackdropDatabaseCache::deletePrefix().
    */
-  function deletePrefix($cid) {
+  function deletePrefix(string $cid) {
     try {
       if (class_exists('Database')) {
         parent::deletePrefix($cid);

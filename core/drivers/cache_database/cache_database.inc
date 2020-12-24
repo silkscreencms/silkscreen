@@ -12,7 +12,7 @@ class BackdropDatabaseCache implements BackdropCacheInterface {
   /**
    * Constructs a new BackdropDatabaseCache object.
    */
-  function __construct($bin) {
+  function __construct(string $bin) {
     // All cache tables should be prefixed with 'cache_', except for the
     // default 'cache' bin.
     if ($bin != 'cache') {
@@ -29,7 +29,7 @@ class BackdropDatabaseCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::get().
    */
-  function get($cid) {
+  function get(string $cid) {
     $cids = array($cid);
     $cache = $this->getMultiple($cids);
     return reset($cache);
@@ -93,7 +93,7 @@ class BackdropDatabaseCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::set().
    */
-  function set($cid, $data, $expire = CACHE_PERMANENT) {
+  function set(string $cid, $data, int $expire = CACHE_PERMANENT) {
     $fields = array(
       'serialized' => 0,
       'created' => REQUEST_TIME,
@@ -122,7 +122,7 @@ class BackdropDatabaseCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::delete().
    */
-  function delete($cid) {
+  function delete(string $cid) {
     db_delete($this->bin)
       ->condition('cid', $cid)
       ->execute();
@@ -144,7 +144,7 @@ class BackdropDatabaseCache implements BackdropCacheInterface {
   /**
    * Implements BackdropCacheInterface::deletePrefix().
    */
-  function deletePrefix($prefix) {
+  function deletePrefix(string $prefix) {
     db_delete($this->bin)
       ->condition('cid', db_like($prefix) . '%', 'LIKE')
       ->execute();
