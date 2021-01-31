@@ -2993,6 +2993,23 @@ function db_find_tables($table_expression) {
   return Database::getConnection()->schema()->findTables($table_expression);
 }
 
+/**
+ * Finds all tables that are like the specified base table name. This is a
+ * backport of the change made to db_find_tables in Drupal 8 to work with
+ * virtual, un-prefixed table names. The original function is retained for
+ * Backwards Compatibility.
+ * @see https://www.drupal.org/node/2552435
+ *
+ * @param $table_expression
+ *   An SQL expression, for example "simpletest%" (without the quotes).
+ *
+ * @return
+ *   Array, both the keys and the values are the matching tables.
+ */
+function db_find_tables_d8($table_expression) {
+  return Database::getConnection()->schema()->findTablesD8($table_expression);
+}
+
 function _db_create_keys_sql($spec) {
   return Database::getConnection()->schema()->createKeysSql($spec);
 }

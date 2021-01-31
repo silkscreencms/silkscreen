@@ -387,7 +387,7 @@ class SchemaTestCase extends BackdropWebTestCase {
     Database::getConnection()->schema()->createTable('the_third_table', $table_specification);
 
     // Check the "all tables" syntax.
-    $tables = Database::getConnection()->schema()->findTables('%');
+    $tables = Database::getConnection()->schema()->findTablesD8('%');
     sort($tables);
     $expected = array(
       'test_1_table',

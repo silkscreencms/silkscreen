@@ -328,7 +328,33 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
   }
 
   /**
-   * Finds all tables that are like the specified base table name.
+   * Find all tables that are like the specified base table name.
+   *
+   * @param $table_expression
+   *   An SQL expression, for example "simpletest%" (without the quotes).
+   *   BEWARE: this is not prefixed, the caller should take care of that.
+   *
+   * @return
+   *   Array, both the keys and the values are the matching tables.
+   */
+  public function findTables($table_expression) {
+    $condition = $this->buildTableNameCondition($table_expression, 'LIKE', FALSE);
+
+    $condition->compile($this->connection, $this);
+    // Normally, we would heartily discourage the use of string
+    // concatenation for conditionals like this however, we
+    // couldn't use db_select() here because it would prefix
+    // information_schema.tables and the query would fail.
+    // Don't use {} around information_schema.tables table.
+    return $this->connection->query("SELECT table_name FROM information_schema.tables WHERE " . (string) $condition, $condition->arguments())->fetchAllKeyed(0, 0);
+  }
+
+  /**
+   * Finds all tables that are like the specified base table name. This is a
+   * backport of the change made to findTables in Drupal 8 to work with virtual,
+   * un-prefixed table names. The original function is retained for Backwards
+   * Compatibility.
+   * @see https://www.drupal.org/node/2552435
    *
    * @param string $table_expression
    *   An SQL expression, for example "cache_%" (without the quotes).
@@ -336,7 +362,7 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
    * @return array
    *   Both the keys and the values are the matching tables.
    */
-  public function findTables($table_expression) {
+  public function findTablesD8($table_expression) {
     // Load all the tables up front in order to take into account per-table
     // prefixes. The actual matching is done at the bottom of the method.
     $condition = $this->buildTableNameCondition('%', 'LIKE');
