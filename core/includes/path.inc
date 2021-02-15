@@ -81,7 +81,7 @@ function backdrop_lookup_path($action, $path = '', $langcode = NULL) {
         $cache['map'][$langcode] = array();
         // Load system paths from cache.
         $cid = current_path();
-        if ($cached = cache('path')->get($cid)) {
+        if (($cid !== NULL) && ($cached = cache('path')->get($cid))) {
           $cache['system_paths'] = $cached->data;
           // Now fetch the aliases corresponding to these system paths.
           $args = array(
