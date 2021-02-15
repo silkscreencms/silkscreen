@@ -3006,8 +3006,8 @@ function db_find_tables($table_expression) {
  * @return
  *   Array, both the keys and the values are the matching tables.
  */
-function db_find_tables_d8($table_expression) {
-  return Database::getConnection()->schema()->findTablesD8($table_expression);
+function db_find_prefixed_tables($table_expression) {
+  return Database::getConnection()->schema()->findPrefixedTables($table_expression);
 }
 
 function _db_create_keys_sql($spec) {

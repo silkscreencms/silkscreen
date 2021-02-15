@@ -362,12 +362,11 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
    * @return array
    *   Both the keys and the values are the matching tables.
    */
-  public function findTablesD8($table_expression) {
+  public function findPrefixedTables($table_expression) {
     // Load all the tables up front in order to take into account per-table
     // prefixes. The actual matching is done at the bottom of the method.
     $condition = $this->buildTableNameCondition('%', 'LIKE');
     $condition->compile($this->connection, $this);
-
     $individually_prefixed_tables = $this->connection->getUnprefixedTablesMap();
     $default_prefix = $this->connection->tablePrefix();
     $default_prefix_length = strlen($default_prefix);
@@ -391,10 +390,8 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
       else {
         $prefix_length = $default_prefix_length;
       }
-
       // Remove the prefix from the returned tables.
       $unprefixed_table_name = substr($table->table_name, $prefix_length);
-
       // The pattern can match a table which is the same as the prefix. That
       // will become an empty string when we remove the prefix, which will
       // probably surprise the caller, besides not being a prefixed table. So
@@ -403,12 +400,10 @@ abstract class DatabaseSchema implements QueryPlaceholderInterface {
         $tables[$unprefixed_table_name] = $unprefixed_table_name;
       }
     }
-
     // Convert the table expression from its SQL LIKE syntax to a regular
     // expression and escape the delimiter that will be used for matching.
     $table_expression = str_replace(array('%', '_'), array('.*?', '.'), preg_quote($table_expression, '/'));
     $tables = preg_grep('/^' . $table_expression . '$/i', $tables);
-
     return $tables;
   }
 
