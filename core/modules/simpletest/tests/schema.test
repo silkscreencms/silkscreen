@@ -387,7 +387,7 @@ class SchemaTestCase extends BackdropWebTestCase {
     Database::getConnection()->schema()->createTable('the_third_table', $table_specification);
 
     // Check the "all tables" syntax.
-    $tables = Database::getConnection()->schema()->findTablesD8('%');
+    $tables = Database::getConnection()->schema()->findPrefixedTables('%');
     sort($tables);
     $expected = array(
       'test_1_table',
@@ -399,7 +399,7 @@ class SchemaTestCase extends BackdropWebTestCase {
     $this->assertTrue(!array_diff($expected, $tables), 'All tables were found.');
 
     // Check the restrictive syntax.
-    $tables = Database::getConnection()->schema()->findTables('test_%');
+    $tables = Database::getConnection()->schema()->findPrefixedTables('test_%');
     sort($tables);
     $expected = array(
       'test_1_table',

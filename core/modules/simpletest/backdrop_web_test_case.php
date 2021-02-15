@@ -1873,7 +1873,7 @@ class BackdropWebTestCase extends BackdropTestCase {
     file_unmanaged_delete_recursive($this->originalFileDirectory . '/simpletest/' . $this->fileDirectoryName);
 
     // Remove all prefixed tables.
-    $tables = db_find_tables_d8('%');
+    $tables = db_find_prefixed_tables('%');
     if (empty($tables)) {
       $this->fail('Failed to find test tables to drop.');
     }
