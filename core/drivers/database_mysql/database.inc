@@ -375,7 +375,7 @@ class DatabaseConnection_mysql extends DatabaseConnection {
     $sql_mode = 'REAL_AS_FLOAT,PIPES_AS_CONCAT,ANSI_QUOTES,IGNORE_SPACE,STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO';
     // NO_AUTO_CREATE_USER was removed in MySQL 8.0.11
     // https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-11.html#mysqld-8-0-11-deprecation-removal
-    if (version_compare($this->getAttribute(PDO::ATTR_SERVER_VERSION), '8.0.11', '<')) {
+    if (version_compare($this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION), '8.0.11', '<')) {
       $sql_mode .= ',NO_AUTO_CREATE_USER';
     }
     $connection_options['init_commands'] += array(

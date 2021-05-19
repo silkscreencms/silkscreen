@@ -352,7 +352,7 @@ abstract class DatabaseConnection {
     // The Statement class attribute only accepts a new value that presents a
     // proper callable, so we reset it to PDOStatement.
     if (!empty($this->statementClass)) {
-      $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
+      $this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement', array()));
     }
     $this->schema = NULL;
   }
