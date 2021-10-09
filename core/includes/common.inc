@@ -7940,6 +7940,9 @@ function backdrop_common_theme() {
     'container' => array(
       'render element' => 'element',
     ),
+    'details' => array(
+      'render element' => 'element',
+    ),
   );
 }
 
