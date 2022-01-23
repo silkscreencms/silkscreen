@@ -8455,12 +8455,13 @@ function backdrop_parse_dependency($dependency) {
   $p_major = '(?P<major>\d+)';
   // By setting the minor version to x, branches can be matched.
   $p_minor = '(?P<minor>(?:\d+|x)(?:-[A-Za-z]+\d+)?)';
+  $p_patch = '(?P<patch>(?:\d+|x)(?:-[A-Za-z]+\d+)?)?';
   $parts = explode('(', $dependency, 2);
   $value['name'] = trim($parts[0]);
   if (isset($parts[1])) {
     $value['original_version'] = '(' . $parts[1];
     foreach (explode(',', $parts[1]) as $version) {
-      if (preg_match("/^\s*$p_op\s*$p_core$p_major\.$p_minor/", $version, $matches)) {
+      if (preg_match("/^\s*$p_op\s*$p_core$p_major\.$p_minor\.?$p_patch/", $version, $matches)) {
         $op = !empty($matches['operation']) ? $matches['operation'] : '=';
         if ($matches['minor'] == 'x') {
           // Backdrop considers "2.x" to mean any version that begins with
@@ -8478,7 +8479,23 @@ function backdrop_parse_dependency($dependency) {
             $op = '>=';
           }
         }
-        $value['versions'][] = array('op' => $op, 'version' => $matches['major'] . '.' . $matches['minor']);
+
+        if (isset($matches['patch']) && ($matches['patch'] === '0' || $matches['patch'])) {
+          if ($matches['patch'] == 'x' && $matches['minor'] !== 'x') {
+            // See comments above about "x" in minor. 
+            // Same principle applies to patch in relation to minor.
+            if ($op == '>' || $op == '<=') {
+              $matches['minor']++;
+            }
+            if ($op == '=' || $op == '==') {
+              $value['versions'][] = array('op' => '<', 'version' => $matches['major'] . '.' . ($matches['minor'] + 1) . '.x');
+              $op = '>=';
+            }
+          }
+        }
+        $version = $matches['major'] . '.' . $matches['minor'];
+        $version .= (isset($matches['patch']) && ($matches['patch'] === '0' || $matches['patch'])) ? '.' . $matches['patch'] : '';
+        $value['versions'][] = array('op' => $op, 'version' => $version);
       }
     }
   }
@@ -8516,12 +8533,18 @@ function backdrop_check_incompatibility(array $dependency_info, $current_version
  * Converts a Backdrop version string into numeric-only version string.
  *
  * @param string $version_string
- *   A version string such as 1.10.0-beta4 or 1.4.x-dev.
+ *   A version string such as 1.x-1.2.3, 1.10.0-beta4, or 1.4.x-dev.
  * @return string
  *   A converted string only containing numbers, for use in PHP's
  *   version_compare() function.
  */
 function _backdrop_version_compare_convert($version_string) {
+  // Remove the "1.x-" prefix (indicating Backdrop core version compatibility).
+  $core_prefix = BACKDROP_CORE_COMPATIBILITY . '-';
+  if (strpos($version_string, $core_prefix) === 0) {
+    $version_string = substr($version_string, strlen($core_prefix));
+  }
+
   // Convert "dev" releases to be the highest possible version number. For
   // example 1.5.x-dev should be considered higher than any other 1.5 release,
   // so we replace .x with 99999.

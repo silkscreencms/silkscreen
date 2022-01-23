@@ -1558,7 +1558,8 @@ function system_cron_settings($form, &$form_state) {
   global $base_url;
   $form['#config'] = 'system.core';
   $form['description'] = array(
-    '#markup' => '<p>' . t('Cron takes care of running periodic tasks like checking for updates and indexing content for search.') . '</p>',
+    '#type' => 'help',
+    '#markup' => t('Cron takes care of running periodic tasks like checking for updates and indexing content for search.'),
   );
   $form['run'] = array(
     '#type' => 'submit',
@@ -1572,7 +1573,8 @@ function system_cron_settings($form, &$form_state) {
   );
 
   $form['cron_url'] = array(
-    '#markup' => '<p>' . t('To run cron from outside the site, go to <a href="!cron">!cron</a>', array('!cron' => url($base_url . '/core/cron.php', array('external' => TRUE, 'query' => array('cron_key' => state_get('cron_key', 'backdrop')))))) . '</p>',
+    '#type' => 'help',
+    '#markup' => t('To run cron from outside the site, go to <a href="!cron">!cron</a>', array('!cron' => url($base_url . '/core/cron.php', array('external' => TRUE, 'query' => array('cron_key' => state_get('cron_key', 'backdrop')))))),
   );
 
   $form['cron'] = array(
@@ -2518,7 +2520,7 @@ function system_utf8mb4_convert_form($form, &$form_state) {
 
   $form['help'] = array(
     '#type' => 'help',
-    '#markup' => '<p>' . $requirements['description'] . '</p>',
+    '#markup' => $requirements['description'],
   );
 
   // Not active and/or supported. Existing messages should be sufficient.
@@ -2844,56 +2846,3 @@ function system_transliterate_ajax_access() {
   return backdrop_valid_token($replace_token, $replace_pattern);
 }
 
-/**
- * Wrapper around transliteration_get() that handles common clean up on strings.
- *
- * @param string $string
- *   The string to be transliterated.
- * @param $options
- *   An array of options for further cleanup. This array includes:
- *   - langcode: The language code of the source string.
- *   - replace: The character with which to replace unknown characters in the
- *     string. Defaults to '_'.
- *   - replace_pattern: A pattern for replacing unknown characters with the
- *     "replace" value.
- *   - maxlength: The maximum allowed length of the returned string.
- * @return string
- *   The transliterated and cleaned up string.
- */
-function system_transliterate_machine_name($string, $options) {
-  include_once BACKDROP_ROOT . '/core/includes/transliteration.inc';
-  $defaults = array(
-    'langcode' => $GLOBALS['language']->langcode,
-    'replace' => '_',
-    'replace_pattern' => NULL,
-    'maxlength' => NULL,
-  );
-  $options = array_intersect_key($options, $defaults) + $defaults;
-
-  // Build the default replacement pattern on the given "replace" property.
-  if (!isset($options['replace_pattern'])) {
-    $options['replace_pattern'] = '[^0-9A-Za-z' . $options['replace'] . ']+';
-  }
-
-  $replace = $options['replace'];
-  $string = transliteration_get($string, $replace, $options['langcode']);
-
-  // Remove remaining unsafe characters.
-  if ($options['replace_pattern']) {
-    $string = preg_replace('/' . $options['replace_pattern'] . '/', $options['replace'], $string);
-  }
-  // Replace whitespace.
-  $string = str_replace(' ', $replace, $string);
-  // Remove leading and trailing whitespace/unknown characters.
-  $string = trim($string, $replace);
-  // Collapse multiple consecutive replacement characters.
-  $replace_regex = strlen($replace) ? "([$replace])[$replace]+|" : '';
-  $string = preg_replace("/{$replace_regex}(_)_+|(\\.)\\.+|(-)-+/", '$1$2$3$4$5', $string);
-
-  // Set maxlength.
-  if ($options['maxlength']) {
-    $string = substr($string, 0, $options['maxlength']);
-  }
-
-  return $string;
-}
