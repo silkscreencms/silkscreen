@@ -1930,9 +1930,6 @@ class BackdropWebTestCase extends BackdropTestCase {
     // Rebuild caches.
     $this->refreshVariables();
 
-    // Reset public files directory.
-    $GLOBALS['conf']['file_public_path'] = $this->originalFileDirectory;
-
     // Reset language.
     $language = $this->originalLanguage;
     $language_url = $this->originalLanguageUrl;
