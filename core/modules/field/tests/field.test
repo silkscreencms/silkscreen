@@ -1667,7 +1667,7 @@ class FieldFormTestCase extends FieldTestCase {
     $this->assertEqual($result[0], '*', t('Required symbol and field label are visually hidden.'));
 
     // Click "Add another" button
-    $this->backdropPost(NULL, array(), t('Add another'));
+    $this->backdropPost(NULL, array(), t('Add another item'));
     $this->assertText(t('@name field is required.', array('@name' => $instance['label'])), t('Validation error for required unlimited field includes the name of the field.'));
   }
 
