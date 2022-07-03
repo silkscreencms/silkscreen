@@ -746,7 +746,7 @@ class Config {
    */
   public function getOverride($key) {
     $value = NULL;
-    $parts = explode('.', $key);
+    $parts = explode('.', (string) $key);
     $popped_parts = array();
     while ($parts) {
       $assembled_key = implode('.', $parts);

@@ -1730,6 +1730,7 @@ class DatabaseCondition implements QueryConditionInterface, Countable {
    * size of its conditional array minus one, because one element is the
    * conjunction.
    */
+  #[\ReturnTypeWillChange]
   public function count() {
     return count($this->conditions) - 1;
   }
