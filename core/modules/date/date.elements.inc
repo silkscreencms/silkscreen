@@ -905,8 +905,10 @@ function date_default_value_part($item, $field, $instance, $langcode, $part = 'v
       return NULL;
     }
     else {
+      // Consider timestamps.
+      $string = is_numeric($item[0]['value']) ? '@' . $item[0]['value'] : $item[0]['value'];
       // The date stored in 'value' has already been switched to the db timezone.
-      $date = new BackdropDateTime($item[0]['value'], $timezone_db, DATE_FORMAT_DATETIME);
+      $date = new BackdropDateTime($string, $timezone_db, DATE_FORMAT_DATETIME);
     }
   }
   // Special case for 'now' when using dates with no timezone,
@@ -1167,7 +1169,7 @@ function _date_popup_process_time_part(&$element) {
   // Add in the timepicker if set.
   if ($element['#timepicker']) {
     $settings = array(
-      'show24Hours' => strpos($element['#date_format'], 'H') !== FALSE ? TRUE : FALSE,
+      'show24Hours' => (strpos($element['#date_format'], 'H') !== FALSE || strpos($element['#date_format'], 'G') !== FALSE) ? TRUE : FALSE,
       'showSeconds' => (in_array('second', $granularity) ? TRUE : FALSE),
       'timeSteps' => array(1, intval($element['#date_increment']), (in_array('second', $granularity) ? $element['#date_increment'] : 0)),
       'fromTo' => isset($fromto),
