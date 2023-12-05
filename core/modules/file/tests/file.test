@@ -2119,7 +2119,7 @@ class FileEditTestCase extends FileTestHelper {
     $this->assertTrue($file, t('File found in database.'));
 
     // Check that "edit" link points to correct page.
-    $this->backdropGet('admin/content/files');
+    $this->backdropGet('admin/content/files', ['query' => ['order' => 'filesize']]);
     $this->clickLink(t('Manage'));
     $edit_url = url("file/$file->fid/manage", array('absolute' => TRUE));
     $actual_url = strtok($this->getURL(), '?');
