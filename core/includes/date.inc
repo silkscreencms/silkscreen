@@ -1333,7 +1333,7 @@ function date_format_order($format) {
  *   An array like ('year', 'month', 'day', 'hour', 'minute', 'second');
  *
  * @return array
- *   A reduced set of granularitiy elements.
+ *   A reduced set of granularity elements.
  */
 function date_nongranularity($granularity) {
   $options = array(

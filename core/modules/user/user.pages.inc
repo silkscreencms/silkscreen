@@ -21,6 +21,18 @@ function user_autocomplete($string = '') {
 }
 
 /**
+ * Menu callback for reset password form.
+ *
+ * @since 1.23.1 Replaces user_pass() as menu callback.
+ *
+ * @see user_pass()
+ */
+function user_pass_page() {
+  backdrop_set_title(t('Reset password'));
+  return backdrop_get_form('user_pass');
+}
+
+/**
  * Form builder; request a password reset.
  *
  * @ingroup forms
@@ -30,26 +42,29 @@ function user_autocomplete($string = '') {
 function user_pass() {
   global $user;
 
-  backdrop_set_title(t('Reset password'));
-
   $form['name'] = array(
     '#type' => 'textfield',
-    '#title' => t('Username or e-mail address'),
+    '#title' => t('Username or email address'),
     '#size' => 60,
     '#maxlength' => max(USERNAME_MAX_LENGTH, EMAIL_MAX_LENGTH),
     '#required' => TRUE,
     '#default_value' => isset($_GET['name']) ? $_GET['name'] : '',
     '#attributes' => array(
-      'autofocus' => 'autofocus',
+      // Add attributes to field to prevent spell-jacking and unwanted
+      // automatic changes caused by the browser.
+      'autocapitalize' => 'none',
+      'autocorrect' => 'off',
+      'spellcheck' => 'false',
     ),
   );
+
   // Allow logged in users to request this also.
   if ($user->uid > 0) {
     $form['name']['#type'] = 'value';
     $form['name']['#value'] = $user->mail;
     $form['mail'] = array(
       '#prefix' => '<p>',
-      '#markup' =>  t('Password reset instructions will be mailed to %email. You must log out to use the password reset link in the e-mail.', array('%email' => $user->mail)),
+      '#markup' => t('Password reset instructions will be mailed to %email. You must log out to use the password reset link in the email.', array('%email' => $user->mail)),
       '#suffix' => '</p>',
     );
   }
@@ -101,7 +116,7 @@ function user_pass_validate($form, &$form_state) {
     form_set_value(array('#parents' => array('account')), $account, $form_state);
   }
   else {
-    form_set_error('name', t('Sorry, %name is not recognized as a user name or an e-mail address.', array('%name' => $name)));
+    form_set_error('name', t('Sorry, %name is not recognized as a user name or an email address.', array('%name' => $name)));
   }
 }
 
@@ -118,7 +133,7 @@ function user_pass_submit($form, &$form_state) {
   $mail = _user_mail_notify('password_reset', $account, $language);
   if (!empty($mail)) {
     watchdog('user', 'Password reset instructions mailed to %name at %email.', array('%name' => $account->name, '%email' => $account->mail));
-    backdrop_set_message(t('Further instructions have been sent to your e-mail address.'));
+    backdrop_set_message(t('Further instructions have been sent to your email address.'));
   }
 
   $form_state['redirect'] = 'user';
@@ -126,7 +141,8 @@ function user_pass_submit($form, &$form_state) {
 }
 
 /**
- * Menu callback; process one time login link and redirects to the user page on success.
+ * Menu callback; process one time login link and redirects to the user page on
+ * success.
  *
  * @param int $uid
  *   User ID for the user who would like their password reset.
@@ -151,8 +167,8 @@ function user_pass_reset($uid, $timestamp, $hashed_pass, $immediate_login = FALS
     else {
       $reset_link_account = user_load($uid);
       if (!empty($reset_link_account)) {
-        backdrop_set_message(t('Another user (%other_user) is already logged into the site on this computer, but you tried to use a reset password link for user %resetting_user. Please <a href="!logout">logout</a> and try using the link again.',
-          array('%other_user' => $user->name, '%resetting_user' => $reset_link_account->name, '!logout' => url('user/logout'))), 'warning');
+        backdrop_set_message(t('You cannot use a password reset link while logged into the site. Please <a href="!logout">logout</a> and try using the link again.',
+          array('!logout' => url('user/logout'))), 'warning');
       } else {
         // Invalid one-time link specifies an unknown user.
         backdrop_set_message(t('The one-time login link you clicked is invalid.'), 'error');
@@ -425,10 +441,10 @@ function user_cancel_confirm_form($form, &$form_state, $account) {
   $override_access = $admin_access && ($account->uid != $user->uid);
   $form['user_cancel_confirm'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Require e-mail confirmation to cancel account.'),
+    '#title' => t('Require email confirmation to cancel account.'),
     '#default_value' => ($override_access ? FALSE : TRUE),
     '#access' => $override_access,
-    '#description' => t('When enabled, the user must confirm the account cancellation via e-mail.'),
+    '#description' => t('When enabled, the user must confirm the account cancellation via email.'),
   );
   // Also allow to send account canceled notification mail, if enabled.
   $default_notify = config_get('system.core', 'user_mail_status_canceled_notify');
@@ -437,7 +453,7 @@ function user_cancel_confirm_form($form, &$form_state, $account) {
     '#title' => t('Notify user when account is canceled.'),
     '#default_value' => ($override_access ? FALSE : $default_notify),
     '#access' => $override_access && $default_notify,
-    '#description' => t('When enabled, the user will receive an e-mail notification after the account has been cancelled.'),
+    '#description' => t('When enabled, the user will receive an email notification after the account has been cancelled.'),
   );
 
   // Prepare confirmation form page title and description.
@@ -498,7 +514,7 @@ function user_cancel_confirm_form_submit($form, &$form_state) {
     $account->user_cancel_notify = $form_state['values']['user_cancel_notify'];
     $account->save();
     _user_mail_notify('cancel_confirm', $account);
-    backdrop_set_message(t('A confirmation request to cancel your account has been sent to your e-mail address.'));
+    backdrop_set_message(t('A confirmation request to cancel your account has been sent to your email address.'));
     watchdog('user', 'Sent account cancellation request to %name %email.', array('%name' => $account->name, '%email' => '<' . $account->mail . '>'), WATCHDOG_NOTICE);
 
     $form_state['redirect'] = "user/$account->uid";
@@ -521,19 +537,19 @@ function user_cancel_methods() {
   $anonymous_name = $site_config->get('anonymous');
   $methods = array(
     'user_cancel_block' => array(
-      'title' => t('Disable the account and keep its content.'),
+      'title' => t('Disable the account and keep its content'),
       'description' => t('Your account will be blocked and you will no longer be able to log in. All of your content will remain attributed to your user name.'),
     ),
     'user_cancel_block_unpublish' => array(
-      'title' => t('Disable the account and unpublish its content.'),
+      'title' => t('Disable the account and unpublish its content'),
       'description' => t('Your account will be blocked and you will no longer be able to log in. All of your content will be hidden from everyone but administrators.'),
     ),
     'user_cancel_reassign' => array(
-      'title' => t('Delete the account and make its content belong to the %anonymous-name user.', array('%anonymous-name' => $anonymous_name)),
+      'title' => t('Delete the account and make its content belong to the %anonymous-name user', array('%anonymous-name' => $anonymous_name)),
       'description' => t('Your account will be removed and all account information deleted. All of your content will be assigned to the %anonymous-name user.', array('%anonymous-name' => $anonymous_name)),
     ),
     'user_cancel_delete' => array(
-      'title' => t('Delete the account and its content.'),
+      'title' => t('Delete the account and its content'),
       'description' => t('Your account will be removed and all account information deleted. All of your content will also be deleted.'),
       'access' => user_access('administer users'),
     ),
@@ -557,7 +573,7 @@ function user_cancel_methods() {
 }
 
 /**
- * Menu callback; cancel a user account via e-mail confirmation link.
+ * Menu callback; cancel a user account via email confirmation link.
  *
  * @see user_cancel_confirm_form()
  * @see user_cancel_url()

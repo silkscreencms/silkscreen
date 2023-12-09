@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Base FileTransfer class.
@@ -16,6 +15,16 @@ abstract class FileTransfer {
   protected $password;
   protected $hostname = 'localhost';
   protected $port;
+
+  /**
+   * @var string
+   */
+  protected $jail;
+
+  /**
+   * @var string
+   */
+  protected $chroot;
 
   /**
    * The constructor for the UpdateConnection class. This method is also called

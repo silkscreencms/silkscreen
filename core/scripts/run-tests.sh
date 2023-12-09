@@ -329,7 +329,7 @@ All arguments are long options.
               Skip the tests and/or classes listed in <file>, one test per line. The
               file .simpletestignore follows the same format and is always read.
 
-  --cache     Generate cache for instalation profiles to boost tests speed.
+  --cache     Generate cache for installation profiles to boost tests speed.
 
   --myisam-convert
               Convert cache tables to MyISAM. Improves test performance but is
