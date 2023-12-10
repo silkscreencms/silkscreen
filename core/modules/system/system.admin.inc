@@ -1641,17 +1641,7 @@ function system_logging_settings($form, &$form_state) {
   $form['watchdog_enabled_severity_levels'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Severity of messages to log'),
-    '#options' => array(
-      WATCHDOG_EMERGENCY => t('Emergency'),
-      WATCHDOG_ALERT => t('Alert'),
-      WATCHDOG_CRITICAL => t('Critical'),
-      WATCHDOG_ERROR => t('Error'),
-      WATCHDOG_WARNING => t('Warning'),
-      WATCHDOG_NOTICE => t('Notice'),
-      WATCHDOG_INFO => t('Info'),
-      WATCHDOG_DEBUG => t('Debug'),
-      WATCHDOG_DEPRECATED => t('Deprecated'),
-    ),
+    '#options' => watchdog_severity_levels(),
     '#default_value' => $site_config->get('watchdog_enabled_severity_levels'),
     '#description' => t('The <em>debug</em> and <em>deprecated</em> severity levels are recommended for developer environments, but not on production sites.'),
   );
@@ -1851,7 +1841,7 @@ function system_file_system_settings() {
     '#title' => t('Private file system path'),
     '#default_value' => $config->get('file_private_path'),
     '#maxlength' => 255,
-    '#description' => t('An existing local file system path for storing private files. It should be writable by Backdrop and not accessible over the web. See the online handbook for <a href="@handbook">more information about securing private files</a>.', array('@handbook' => 'https://backdropcms.org/user-guide/file-system')),
+    '#description' => t('An existing local file system path for storing private files. It should be writable by Backdrop and not accessible over the web. See the online handbook for <a href="@handbook">more information about securing private files</a>.', array('@handbook' => 'https://docs.backdropcms.org/documentation/managing-file-locations-and-access')),
     '#after_build' => array('system_check_directory'),
   );
 

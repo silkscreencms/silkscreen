@@ -1767,7 +1767,6 @@ class BackdropWebTestCase extends BackdropTestCase {
       $core_config->save();
     }
 
-
     // Set 'parent_profile' of simpletest to add the parent profile's
     // search path to the child site's search paths.
     // @see backdrop_system_listing()

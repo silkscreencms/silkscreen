@@ -1254,8 +1254,9 @@ function path_to_theme() {
  * @param $prefixes
  *   An array of prefixes to test, in reverse order of importance.
  *
- * @return $implementations
- *   The functions found, suitable for returning from hook_theme;
+ * @return array
+ *   An array of the functions found, suitable for returning from hook_theme.
+ *   Keyed by the theme hook and includes the function that implements it.
  */
 function backdrop_find_theme_functions($cache, $prefixes) {
   $implementations = array();
@@ -2049,7 +2050,7 @@ function theme_breadcrumb($variables) {
   $output = '';
   if (!empty($breadcrumb)) {
     $output .= '<nav class="breadcrumb" aria-label="' . t('Website Orientation') . '">';
-    $output .= '<ol><li>' . implode(' » </li><li>', $breadcrumb) . '</li></ol>';
+    $output .= '<ol><li>' . implode('<span class="breadcrumb-separator" aria-hidden="true"> » </span></li><li>', $breadcrumb) . '</li></ol>';
     $output .= '</nav>';
   }
   return $output;
