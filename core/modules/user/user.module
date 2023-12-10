@@ -2468,7 +2468,7 @@ function user_mail_tokens(&$replacements, $data, $options) {
 function user_roles($members_only = FALSE, $permission = NULL, $full_objects = FALSE) {
   $user_roles = &backdrop_static(__FUNCTION__);
 
-  if (!isset($user_roles)) {
+  if (empty($user_roles)) {
     $user_roles = array();
 
     // @todo: Consider a cache get here instead of reading from disk.
