@@ -125,12 +125,6 @@ $url = parse_url($options['db-url']);
 
 $url = array_map('urldecode', $url);
 
-// Check if the driver is set to mysql and report error if it is not.
-if ($url['scheme'] != 'mysql') {
-  print "Only mysql connections are supported. Specify one as --db-url=mysql://user:pass@host_name/db_name.\n";
-  exit;
-}
-
 $url += array(
   'user' => NULL,
   'pass' => NULL,
